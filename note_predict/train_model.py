@@ -11,13 +11,13 @@ BATCH_SIZE = 10  # num of training examples per minibatch
 EPOCH = 15
 LR = 0.001
 
-index_array = np.load('./dataset/index_array.npy')
+index_array = np.load('../dataset/harmonica_note_test_dataset/index_array.npy')
 r = ['Do', 'Re', 'Mi', 'Fa', 'So']
 note_array = []
 test_array = []
 for note in r:                                                                              # training data
     for i in range(1, 31):
-        waveform, sample_rate = torchaudio.load('./dataset/harmonica_note_train/' + note + '_' + str(i) + '.wav', normalization=False)	# read waveform shape [2, 66150]
+        waveform, sample_rate = torchaudio.load('../dataset/harmonica_note_test_dataset/harmonica_note_train/' + note + '_' + str(i) + '.wav', normalization=False)	# read waveform shape [2, 66150]
         new_sample_rate = sample_rate/4
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))
         waveform = waveform.numpy()[0, :]													# shape [66150]
@@ -29,7 +29,7 @@ for note in r:                                                                  
         note_array.append(waveform)                                                         # put into array
 
 for i in range(1, 14):
-    test_waveform, sample_rate = torchaudio.load('./dataset/harmonica_note_test/test_' + str(i) + '.wav')      # test data
+    test_waveform, sample_rate = torchaudio.load('../dataset/harmonica_note_test_dataset/harmonica_note_test/test_' + str(i) + '.wav')      # test data
     new_sample_rate = sample_rate/4
     test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
     test_waveform = test_waveform.numpy()[0, :]
@@ -136,8 +136,8 @@ for epoch in range(EPOCH):
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_model_5_2.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_params_5_2.pth")
+torch.save(cnn, "../model/harmonica_note_test_model/harmonica_model_5_2.pth")
+torch.save(cnn.state_dict(), "../model/harmonica_note_test_model/harmonica_params_5_2.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)

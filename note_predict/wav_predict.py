@@ -42,7 +42,7 @@ class CNN(nn.Module):
 
 test_array = []
 for i in range(1, 20):
-    test_waveform, sample_rate = torchaudio.load('./dataset/harmonica_note_test/test_' + str(i) + '.wav')      # test data
+    test_waveform, sample_rate = torchaudio.load('../dataset/harmonica_note_test_dataset/harmonica_note_test/test_' + str(i) + '.wav')      # test data
     new_sample_rate = sample_rate/4
     test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
     test_waveform = test_waveform.numpy()[0, :]
@@ -57,7 +57,7 @@ for i in range(1, 20):
 tensor_test = torch.Tensor(test_array)
 print(np.shape(tensor_test))
 
-model = torch.load('./model/harmonica_model_5_resample_best.pth')
+model = torch.load('../model/harmonica_note_test_model/harmonica_model_5_resample_best.pth')
 print(model)
 print('-'*50)
 
