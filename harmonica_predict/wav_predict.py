@@ -63,9 +63,8 @@ for condition in dataset:
 os.chdir("../../")
 
 tensor_test = torch.Tensor(test_array)
-print(np.shape(tensor_test))
 
-model = torch.load('./model/harmonica_model/harmonica_error_model.pth')
+model = torch.load('./model/harmonica_model/harmonica_error_model_2.pth')
 print(model)
 print('-'*50)
 

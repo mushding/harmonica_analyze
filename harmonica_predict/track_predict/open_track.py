@@ -1,0 +1,39 @@
+import torch
+import torch.nn as nn
+import numpy as np
+import torchaudio
+from load_model import CNN, predict 
+
+track_array = []
+
+# read sound track to predict
+waveform, sample_rate = torchaudio.load("../../dataset/harmonica_track/we_fastval.wav", normalization=False)	        
+new_sample_rate = sample_rate / 4
+waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
+        
+waveform = waveform.numpy()[0, :]
+length = np.shape(waveform)[0] 
+
+for index in range(0, length, 5200):
+    waveform_part = waveform[index: index + 5200]													                
+    waveform_part = waveform_part[np.newaxis, ...]                                              
+    waveform_part = torch.from_numpy(waveform_part)										
+    waveform_part = waveform_part.detach().numpy()
+    if np.shape(waveform_part)[1] == 5200:
+        track_array.append(waveform_part)
+tensor_track = torch.Tensor(track_array)
+
+# load model
+model = torch.load('../../model/harmonica_model/harmonica_error_model_2.pth')
+print("loading model...")
+print('-'*50)
+
+# put data in cnn
+print("predicting...")
+print('-'*50)
+output = predict(tensor_track, model)
+print(output)
+
+
+
+

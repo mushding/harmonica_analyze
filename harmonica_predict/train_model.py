@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # Hyper Parameters
 BATCH_SIZE = 10  # num of training examples per minibatch
-EPOCH = 15
+EPOCH = 25
 LR = 0.001
 
 index_array = []
@@ -141,8 +141,8 @@ for epoch in range(EPOCH):
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_model/harmonica_error_model.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_params.pth")
+torch.save(cnn, "./model/harmonica_model/harmonica_error_model_2.pth")
+torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_params_2.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)
