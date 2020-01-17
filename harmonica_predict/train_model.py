@@ -15,7 +15,7 @@ LR = 0.001
 index_array = []
 note_array = []
 test_array = []
-dataset = ["broken", "flat"]
+dataset = ["broken", "flat", "double"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               

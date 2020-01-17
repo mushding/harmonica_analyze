@@ -43,7 +43,7 @@ class CNN(nn.Module):
         return output
 
 os.chdir("../dataset/harmonica_dataset")
-dataset = ["broken", "flat"]
+dataset = ["broken", "flat", "double"]
 test_array = []
 for condition in dataset:               
     filename = os.listdir(condition)                                                               # training data
@@ -73,4 +73,4 @@ predict = model(tensor_test)
 print(predict)
 pred_y = torch.max(predict, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')
