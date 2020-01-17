@@ -81,7 +81,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(2304, 1000),
             nn.Tanh(),
-            nn.Linear(1000, 2),   # fully connected layer, output 10 classes
+            nn.Linear(1000, 3),   # fully connected layer, output 10 classes
             # nn.Tanh(),
             # nn.ReLU(),
             # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes
@@ -149,4 +149,4 @@ test_output, _ = cnn(tensor_test)
 print(test_output)
 pred_y = torch.max(test_output, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')

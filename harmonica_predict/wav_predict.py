@@ -31,7 +31,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(2304, 1000),
             nn.Tanh(),
-            nn.Linear(1000, 5),   # fully connected layer, output 10 classes
+            nn.Linear(1000, 3),   # fully connected layer, output 10 classes
         )
     
     def forward(self, x):
