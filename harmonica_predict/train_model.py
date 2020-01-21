@@ -8,21 +8,21 @@ import torchaudio
 import matplotlib.pyplot as plt
 
 # Hyper Parameters
-BATCH_SIZE = 10  # num of training examples per minibatch
-EPOCH = 25
+BATCH_SIZE = 50  # num of training examples per minibatch
+EPOCH = 30
 LR = 0.001
 
 index_array = []
 note_array = []
 test_array = []
-dataset = ["broken", "flat", "double"]
+dataset = ["broken", "flat", "double", "normal"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
     filename = os.listdir(condition)                                                                        # training data
     filenum = len(os.listdir(condition))
     for i in range(filenum):
-        waveform, sample_rate = torchaudio.load(condition + '/' + filename[i], normalization=False)	        # read waveform shape [2, 21748]
+        waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
         new_sample_rate = sample_rate / 4
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
         waveform = waveform.numpy()[0, :5200]													                # shape [5437]
@@ -37,7 +37,7 @@ for index, condition in enumerate(dataset):
 for condition in dataset:               
     filename = os.listdir(condition)                                                               # training data
     for i in range(10):
-        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i], normalization=False)	# read waveform shape [2, 66150]
+        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
         new_sample_rate = sample_rate / 4
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
         test_waveform = test_waveform.numpy()[0, :5200]
@@ -81,7 +81,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(2304, 1000),
             nn.Tanh(),
-            nn.Linear(1000, 3),   # fully connected layer, output 10 classes
+            nn.Linear(1000, 4),   # fully connected layer, output 10 classes
             # nn.Tanh(),
             # nn.ReLU(),
             # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes
@@ -128,8 +128,9 @@ for epoch in range(EPOCH):
             pred_y = torch.max(test_output, 1)[1].data.numpy()
             accuracy = float((pred_y == tensor_index.data.numpy()).astype(int).sum()) / float(tensor_index.size(0))
             print('Epoch: ', epoch, '| train loss: %.4f' % loss.data.numpy(), '| test accuracy: %.2f' % accuracy)
-            if accuracy == 1:
+            if int(accuracy) == 1:
                 three_times = three_times + 1
+                print(three_times)
             else:
                 three_times = 0
             if three_times == 4:
@@ -141,12 +142,12 @@ for epoch in range(EPOCH):
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_model/harmonica_error_model_2.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_params_2.pth")
+torch.save(cnn, "./model/harmonica_model/harmonica_error_model.pth")
+torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_params.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)
 print(test_output)
 pred_y = torch.max(test_output, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3] real number')

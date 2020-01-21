@@ -43,18 +43,16 @@ class CNN(nn.Module):
         return output
 
 os.chdir("../dataset/harmonica_dataset")
-dataset = ["broken", "flat", "double"]
+dataset = ["broken", "flat", "double", "normal"]
 test_array = []
 for condition in dataset:               
     filename = os.listdir(condition)                                                               # training data
     for i in range(10):
-        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i], normalization=False)	# read waveform shape [2, 66150]
+        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
         new_sample_rate = sample_rate / 4
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
         test_waveform = test_waveform.numpy()[0, :5200]
-
-        for i in test_waveform:
-            i = int(i)    
+  
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
 
@@ -64,7 +62,7 @@ os.chdir("../../")
 
 tensor_test = torch.Tensor(test_array)
 
-model = torch.load('./model/harmonica_model/harmonica_error_model_2.pth')
+model = torch.load('./model/harmonica_model/harmonica_error_model.pth')
 print(model)
 print('-'*50)
 
@@ -72,4 +70,4 @@ predict = model(tensor_test)
 print(predict)
 pred_y = torch.max(predict, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3] real number')

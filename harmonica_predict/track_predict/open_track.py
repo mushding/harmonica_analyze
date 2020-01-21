@@ -5,26 +5,28 @@ import torchaudio
 from load_model import CNN, predict 
 
 track_array = []
+FRAME_SIZE = 5200
+STEP_SIZE = 4000
 
 # read sound track to predict
-waveform, sample_rate = torchaudio.load("../../dataset/harmonica_track/we_fastval.wav", normalization=False)	        
+waveform, sample_rate = torchaudio.load("../../dataset/harmonica_track/flat.wav")	        
 new_sample_rate = sample_rate / 4
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
         
 waveform = waveform.numpy()[0, :]
 length = np.shape(waveform)[0] 
 
-for index in range(0, length, 5200):
-    waveform_part = waveform[index: index + 5200]													                
+for index in range(0, length, STEP_SIZE):
+    waveform_part = waveform[index: index + FRAME_SIZE]													                
     waveform_part = waveform_part[np.newaxis, ...]                                              
     waveform_part = torch.from_numpy(waveform_part)										
     waveform_part = waveform_part.detach().numpy()
-    if np.shape(waveform_part)[1] == 5200:
+    if np.shape(waveform_part)[1] == FRAME_SIZE:
         track_array.append(waveform_part)
 tensor_track = torch.Tensor(track_array)
 
 # load model
-model = torch.load('../../model/harmonica_model/harmonica_error_model_2.pth')
+model = torch.load('../../model/harmonica_model/harmonica_error_model.pth')
 print("loading model...")
 print('-'*50)
 
