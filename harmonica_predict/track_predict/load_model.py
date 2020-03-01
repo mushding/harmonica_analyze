@@ -28,7 +28,7 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(1088, 100),
+            nn.Linear(2496, 100),
             nn.Tanh(),
             nn.Linear(100, 4),   # fully connected layer, output 10 classes
         )

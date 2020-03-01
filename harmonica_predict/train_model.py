@@ -11,12 +11,12 @@ import matplotlib.pyplot as plt
 BATCH_SIZE = 100  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
-TRAINING_SIZE = 2757
+TRAINING_SIZE = 5512
 
 index_array = []
 note_array = []
 test_array = []
-dataset = ["broken", "flat", "double", "normal"]
+dataset = ["flat", "double", "normal"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
@@ -80,9 +80,9 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(1088, 100),
+            nn.Linear(2496, 100),
             nn.Tanh(),
-            nn.Linear(100, 4),   # fully connected layer, output 10 classes
+            nn.Linear(100, 3),   # fully connected layer, output 10 classes
             # nn.Tanh(),
             # nn.ReLU(),
             # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes
@@ -135,7 +135,7 @@ for epoch in range(EPOCH):
             else:
                 three_times = 0
             if three_times == 4:
-                # jump = True
+                jump = True
                 break
     if jump:
         break
@@ -151,4 +151,4 @@ test_output, _ = cnn(tensor_test)
 print(test_output)
 pred_y = torch.max(test_output, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')

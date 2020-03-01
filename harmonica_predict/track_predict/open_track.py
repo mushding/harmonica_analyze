@@ -5,8 +5,8 @@ import torchaudio
 from load_model import CNN, predict 
 
 track_array = []
-FRAME_SIZE = 2757
-STEP_SIZE = 2500
+FRAME_SIZE = 5512
+STEP_SIZE = 5000
 
 # read sound track to predict
 waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/test.wav")	        
