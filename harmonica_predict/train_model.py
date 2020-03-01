@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 BATCH_SIZE = 100  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
-TRAINING_SIZE = 5512
+TRAINING_SIZE = 44100/4
 
 index_array = []
 note_array = []

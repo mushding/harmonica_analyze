@@ -5,7 +5,7 @@ import torchaudio
 from load_model import CNN, predict 
 
 track_array = []
-FRAME_SIZE = 5512
+FRAME_SIZE = 44100/4
 STEP_SIZE = 5000
 
 # read sound track to predict

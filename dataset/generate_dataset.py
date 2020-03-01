@@ -2,8 +2,8 @@ import numpy as np
 import torchaudio
 import torch
 
-FRAME_SIZE = 22050  # 0.25 sec
-STEP_SIZE = 20000
+FRAME_SIZE = 44100  # 1 sec
+STEP_SIZE = 40000
 CHECK_SIZE = 4410   # 0.1 sec
 CUT_LIMIT = 0.05
 
