@@ -5,11 +5,11 @@ import torchaudio
 from load_model import CNN, predict 
 
 track_array = []
-FRAME_SIZE = 5200
-STEP_SIZE = 4000
+FRAME_SIZE = 2757
+STEP_SIZE = 2500
 
 # read sound track to predict
-waveform, sample_rate = torchaudio.load("../../dataset/harmonica_track/flat.wav")	        
+waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/test.wav")	        
 new_sample_rate = sample_rate / 4
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
         

@@ -28,9 +28,9 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(2304, 1000),
+            nn.Linear(1088, 100),
             nn.Tanh(),
-            nn.Linear(1000, 4),   # fully connected layer, output 10 classes
+            nn.Linear(100, 4),   # fully connected layer, output 10 classes
         )
     
     def forward(self, x):
