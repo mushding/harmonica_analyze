@@ -3,14 +3,20 @@ import torch.nn as nn
 import numpy as np
 import torchaudio
 from load_model import CNN, predict 
+import argparse
 
 track_array = []
 FRAME_SIZE = 44100/4
 STEP_SIZE = 5000
 
-# read sound track to predict
+def parseArguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file', help="input file in wav format")
+    return parser.parse_args()
 
-waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/test.wav")	        
+# read sound track to predict
+args = parseArguments()
+waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/" + str(args.input_file))	        
 new_sample_rate = sample_rate    #turn to 1
 
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
