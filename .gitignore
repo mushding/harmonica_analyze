@@ -1,2 +1,6 @@
-dataset
+dataset/harmonica_dataset
+dataset/harmonica_note_test_dataset
+dataset/harmonica_test
+dataset/harmonica_track
 .vscode
+model
