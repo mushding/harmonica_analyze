@@ -24,7 +24,7 @@ for index, condition in enumerate(dataset):
     filenum = len(os.listdir(condition))
     for i in range(filenum):
         waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
-        new_sample_rate = sample_rate / 2                                               #turn to 1/2
+        new_sample_rate = sample_rate                                                #turn to 1
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
         waveform = waveform.numpy()[0, :TRAINING_SIZE]													                # shape [5437]
 
@@ -39,7 +39,7 @@ for condition in dataset:
     filename = os.listdir(condition)                                                               # training data
     for i in range(10):
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
-        new_sample_rate = sample_rate / 2                                            #turn to 1/2
+        new_sample_rate = sample_rate                                             #turn to 1
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
         test_waveform = test_waveform.numpy()[0, :TRAINING_SIZE]
 
