@@ -10,7 +10,7 @@ STEP_SIZE = 5000
 
 # read sound track to predict
 waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/test.wav")	        
-new_sample_rate = sample_rate / 4
+new_sample_rate = sample_rate / 2   #turn to 1/2
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
         
 waveform = waveform.numpy()[0, :]
