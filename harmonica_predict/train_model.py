@@ -8,14 +8,15 @@ import torchaudio
 import matplotlib.pyplot as plt
 
 # Hyper Parameters
-BATCH_SIZE = 50  # num of training examples per minibatch
+BATCH_SIZE = 100  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
+TRAINING_SIZE = 44100/4
 
 index_array = []
 note_array = []
 test_array = []
-dataset = ["broken", "flat", "double", "normal"]
+dataset = ["flat", "double", "normal"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
@@ -25,7 +26,7 @@ for index, condition in enumerate(dataset):
         waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
         new_sample_rate = sample_rate / 4
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
-        waveform = waveform.numpy()[0, :5200]													                # shape [5437]
+        waveform = waveform.numpy()[0, :TRAINING_SIZE]													                # shape [5437]
 
         waveform = waveform[np.newaxis, ...]                                                # shape [1, 66150]
         waveform = torch.from_numpy(waveform)												# to torch [1, 66150]
@@ -40,7 +41,7 @@ for condition in dataset:
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
         new_sample_rate = sample_rate / 4
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
-        test_waveform = test_waveform.numpy()[0, :5200]
+        test_waveform = test_waveform.numpy()[0, :TRAINING_SIZE]
 
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
@@ -79,9 +80,9 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(2304, 1000),
+            nn.Linear(2496, 100),
             nn.Tanh(),
-            nn.Linear(1000, 4),   # fully connected layer, output 10 classes
+            nn.Linear(100, 3),   # fully connected layer, output 10 classes
             # nn.Tanh(),
             # nn.ReLU(),
             # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes
@@ -150,4 +151,4 @@ test_output, _ = cnn(tensor_test)
 print(test_output)
 pred_y = torch.max(test_output, 1)[1].data.numpy()
 print(pred_y, 'prediction number')
-print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3] real number')
+print('[0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2] real number')

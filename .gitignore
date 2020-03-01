@@ -1,2 +1,11 @@
+<<<<<<< HEAD
 dataset
 .vscode
+=======
+dataset/harmonica_dataset
+dataset/harmonica_note_test_dataset
+dataset/harmonica_test
+dataset/harmonica_track
+.vscode
+model
+>>>>>>> 6789b8d695be03539abd3064bdb9efd70bf530da
