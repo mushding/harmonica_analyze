@@ -16,7 +16,7 @@ def parseArguments():
 
 # read sound track to predict
 args = parseArguments()
-waveform, sample_rate = torchaudio.load("../../dataset/harmonica_test/" + str(args.input_file))	        
+waveform, sample_rate = torchaudio.load("../dataset/harmonica_test/" + str(args.input_file))	        
 new_sample_rate = sample_rate    #turn to 1
 
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  

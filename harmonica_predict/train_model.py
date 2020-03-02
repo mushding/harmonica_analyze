@@ -24,7 +24,7 @@ for index, condition in enumerate(dataset):
     filenum = len(os.listdir(condition))
     for i in range(filenum):
         waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
-        new_sample_rate = sample_rate                                                #turn to 1
+        new_sample_rate = sample_rate / 4
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
         waveform = waveform.numpy()[0, :int(TRAINING_SIZE)]													                # shape [5437]
 
@@ -39,9 +39,9 @@ for condition in dataset:
     filename = os.listdir(condition)                                                               # training data
     for i in range(10):
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
-        new_sample_rate = sample_rate                                             #turn to 1
+        new_sample_rate = sample_rate / 4
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
-        test_waveform = test_waveform.numpy()[0, :int(TRAINING_SIZE)]
+        test_waveform = test_waveform.numpy()[0, :TRAINING_SIZE]
 
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
@@ -80,7 +80,7 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(5312, 100),
+            nn.Linear(2496, 100),
             nn.Tanh(),
             nn.Linear(100, 3),   # fully connected layer, output 10 classes
             # nn.Tanh(),

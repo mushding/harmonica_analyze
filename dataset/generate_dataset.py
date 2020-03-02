@@ -14,7 +14,7 @@ for name_dir in name_dir_array:
     # read sound track to predict
     for read, save in zip(read_file, save_file):
         cut_waveform = []
-        waveform, sample_rate = torchaudio.load("./harmonica_track/" + read + ".wav") # torch.Size([1, x])
+        waveform, sample_rate = torchaudio.load("./record/" + read + ".wav") # torch.Size([1, x])
         print(read, "before cutting:", waveform.size())
         waveform = list(waveform[0].numpy())            # tensor -> ndarray -> list
         for index in range(0, len(waveform), CHECK_SIZE):
