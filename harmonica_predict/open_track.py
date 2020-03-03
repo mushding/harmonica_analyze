@@ -6,7 +6,8 @@ from load_model import CNN, predict
 import argparse
 
 track_array = []
-FRAME_SIZE = 44100/4
+RESEMPLE_RATE = 1
+FRAME_SIZE = 44100 / RESEMPLE_RATE
 STEP_SIZE = 5000
 
 def parseArguments():
@@ -17,7 +18,7 @@ def parseArguments():
 # read sound track to predict
 args = parseArguments()
 waveform, sample_rate = torchaudio.load("../dataset/harmonica_test/" + str(args.input_file))	        
-new_sample_rate = sample_rate /4   #turn to 1
+new_sample_rate = sample_rate / FRAME_SIZE   #turn to 1
 
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
         

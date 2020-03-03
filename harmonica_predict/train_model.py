@@ -8,10 +8,11 @@ import torchaudio
 import matplotlib.pyplot as plt
 
 # Hyper Parameters
+RESAMPLE_RATE = 1
 BATCH_SIZE = 100  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
-TRAINING_SIZE = 44100/4
+TRAINING_SIZE = 44100 / RESAMPLE_RATE
 
 index_array = []
 note_array = []
@@ -24,7 +25,7 @@ for index, condition in enumerate(dataset):
     filenum = len(os.listdir(condition))
     for i in range(filenum):
         waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
-        new_sample_rate = sample_rate / 4
+        new_sample_rate = sample_rate / RESAMPLE_RATE
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
         waveform = waveform.numpy()[0, :int(TRAINING_SIZE)]													                # shape [5437]
 
@@ -39,7 +40,7 @@ for condition in dataset:
     filename = os.listdir(condition)                                                               # training data
     for i in range(10):
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
-        new_sample_rate = sample_rate / 4
+        new_sample_rate = sample_rate / RESAMPLE_RATE
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
         test_waveform = test_waveform.numpy()[0, :int(TRAINING_SIZE)]
 
@@ -80,7 +81,7 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(5312, 100),
+            nn.Linear(22272, 100),
             nn.Tanh(),
             nn.Linear(100, 4),   # fully connected layer, output 10 classes
             # nn.Tanh(),
