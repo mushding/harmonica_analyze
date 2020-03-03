@@ -17,7 +17,7 @@ def parseArguments():
 # read sound track to predict
 args = parseArguments()
 waveform, sample_rate = torchaudio.load("../dataset/harmonica_test/" + str(args.input_file))	        
-new_sample_rate = sample_rate    #turn to 1
+new_sample_rate = sample_rate /4   #turn to 1
 
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
         
@@ -34,7 +34,7 @@ for index in range(0, length, STEP_SIZE):
 tensor_track = torch.Tensor(track_array)
 
 # load model
-model = torch.load('../../model/harmonica_model/harmonica_error_model.pth')
+model = torch.load('../model/harmonica_model/harmonica_error_model.pth')
 print("loading model...")
 print('-'*50)
 

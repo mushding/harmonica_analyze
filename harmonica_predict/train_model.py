@@ -16,7 +16,7 @@ TRAINING_SIZE = 44100/4
 index_array = []
 note_array = []
 test_array = []
-dataset = ["flat", "double", "normal"]
+dataset = ["space","flat", "double", "normal"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
@@ -41,7 +41,7 @@ for condition in dataset:
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
         new_sample_rate = sample_rate / 4
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
-        test_waveform = test_waveform.numpy()[0, :TRAINING_SIZE]
+        test_waveform = test_waveform.numpy()[0, :int(TRAINING_SIZE)]
 
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
@@ -80,9 +80,9 @@ class CNN(nn.Module):
             nn.MaxPool1d(kernel_size=5),              
         )
         self.out = nn.Sequential(
-            nn.Linear(2496, 100),
+            nn.Linear(5312, 100),
             nn.Tanh(),
-            nn.Linear(100, 3),   # fully connected layer, output 10 classes
+            nn.Linear(100, 4),   # fully connected layer, output 10 classes
             # nn.Tanh(),
             # nn.ReLU(),
             # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes

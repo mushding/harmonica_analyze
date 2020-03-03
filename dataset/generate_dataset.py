@@ -5,12 +5,14 @@ import torch
 FRAME_SIZE = 44100  # 1 sec
 STEP_SIZE = 40000
 CHECK_SIZE = 4410   # 0.1 sec
-CUT_LIMIT = 0.05
+CUT_LIMIT = 0
 
-name_dir_array = ['flat', 'normal', 'double'] 
+name_dir_array = ['space'] 
 for name_dir in name_dir_array:
-    read_file = [name_dir + '_do_mid', name_dir + '_re_mid', name_dir + '_mi_mid', name_dir + '_fa_mid', name_dir + '_so_mid', name_dir + '_la_mid', name_dir + '_si_mid', name_dir + '_do_high']
-    save_file = [name_dir + '_do_mid', name_dir + '_re_mid', name_dir + '_mi_mid', name_dir + '_fa_mid', name_dir + '_so_mid', name_dir + '_la_mid', name_dir + '_si_mid', name_dir + '_do_high']
+   # read_file = [name_dir + '_do_mid', name_dir + '_re_mid', name_dir + '_mi_mid', name_dir + '_fa_mid', name_dir + '_so_mid', name_dir + '_la_mid', name_dir + '_si_mid', name_dir + '_do_high']
+   # save_file = [name_dir + '_do_mid', name_dir + '_re_mid', name_dir + '_mi_mid', name_dir + '_fa_mid', name_dir + '_so_mid', name_dir + '_la_mid', name_dir + '_si_mid', name_dir + '_do_high']
+    read_file = [name_dir]
+    save_file = [name_dir]
     # read sound track to predict
     for read, save in zip(read_file, save_file):
         cut_waveform = []
@@ -23,7 +25,7 @@ for name_dir in name_dir_array:
             for check in check_waveform:
                 if check < CUT_LIMIT and check > -CUT_LIMIT: 
                     num = num + 1
-            if num < 4000:                              # the number of smaller than 0.03
+            if num < STEP_SIZE:                              # the number of smaller than 0.03
                 cut_waveform.extend(check_waveform)
 
         cut_waveform = np.array(cut_waveform)           # list -> ndarray  
