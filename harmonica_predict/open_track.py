@@ -19,23 +19,26 @@ def parseArguments():
 args = parseArguments()
 waveform, sample_rate = torchaudio.load("../dataset/harmonica_test/" + str(args.input_file))	        
 new_sample_rate = sample_rate / RESEMPLE_RATE   #turn to 1
-
 waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0, :].view(1, -1))  
 
 waveform = waveform.numpy()[0, :]
 length = np.shape(waveform)[0] 
 
 for index in range(0, length, STEP_SIZE):
-    waveform_part = waveform[index: index + int(FRAME_SIZE)]													                
-    waveform_part = waveform_part[np.newaxis, ...]                                              
-    waveform_part = torch.from_numpy(waveform_part)										
-    waveform_part = waveform_part.detach().numpy()
+    waveform_part = waveform[index: index + int(FRAME_SIZE)]                            # [44100]             
+    waveform_part = waveform_part[np.newaxis, ...]                                      # [1, 44100]      
+    waveform_part = torch.from_numpy(waveform_part)	                                    # torch [1, 44100]
+    
+    mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform_part) # torch [1, 128, 221]
+    mel_specgram = mel_specgram.detach().numpy()					                    # numpy [1, 128, 221]																	                
+    
     if np.shape(waveform_part)[1] == int(FRAME_SIZE):
-        track_array.append(waveform_part)
-tensor_track = torch.Tensor(track_array)
+        track_array.append(mel_specgram)
+
+tensor_track = torch.Tensor(track_array).float()
 
 # load model
-model = torch.load('../model/harmonica_model/harmonica_error_model.pth')
+model = torch.load('../model/harmonica_model/harmonica_error_2d_params_10.pth')
 print("loading model...")
 print('-'*50)
 

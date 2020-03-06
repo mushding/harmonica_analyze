@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 # Hyper Parameters
 RESAMPLE_RATE = 1
-BATCH_SIZE = 100  # num of training examples per minibatch
+BATCH_SIZE = 150  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
 TRAINING_SIZE = 44100 / RESAMPLE_RATE
@@ -17,76 +17,77 @@ TRAINING_SIZE = 44100 / RESAMPLE_RATE
 index_array = []
 note_array = []
 test_array = []
-dataset = ["space","flat", "double", "normal"]
+dataset = ["space", "flat", "double", "normal"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
     filename = os.listdir(condition)                                                                        # training data
     filenum = len(os.listdir(condition))
+    print("read wav file : " + condition)
     for i in range(filenum):
-        waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	        # read waveform shape [2, 21748]
+        print("processing (data) " + condition + " " + str(i))
+        waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	                            # read waveform shape [2, 21748]
         new_sample_rate = sample_rate / RESAMPLE_RATE
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
-        waveform = waveform.numpy()[0, :int(TRAINING_SIZE)]													                # shape [5437]
+        waveform = waveform.numpy()[0, :int(TRAINING_SIZE)]													# shape [5437]
 
-        waveform = waveform[np.newaxis, ...]                                                # shape [1, 66150]
-        waveform = torch.from_numpy(waveform)												# to torch [1, 66150]
-
-        waveform = waveform.detach().numpy()
-        note_array.append(waveform) 
-        index_array.append(index)                                                        # put into array
+        waveform = waveform[np.newaxis, ...]                                                                # shape [1, 5437]
+        waveform = torch.from_numpy(waveform)												                # to torch [1, 5437]
+        
+        mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform)                      # shape [1, 128, 331]
+        mel_specgram = mel_specgram.detach().numpy()                                                        # to numpy to append
+        note_array.append(mel_specgram)  
+        index_array.append(index)                                                                           # put into array
 
 for condition in dataset:               
-    filename = os.listdir(condition)                                                               # training data
-    for i in range(10):
-        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	# read waveform shape [2, 66150]
+    filename = os.listdir(condition)                                                                        # training data
+    for i in range(190):
+        print("processing (testfile) ... " + condition + " " + str(i))
+        test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	                        # read waveform shape [2, 66150]
         new_sample_rate = sample_rate / RESAMPLE_RATE
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
         test_waveform = test_waveform.numpy()[0, :int(TRAINING_SIZE)]
 
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
+        
+        mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform)                      # shape [1, 128, 331]
+        mel_specgram = mel_specgram.detach().numpy()                                                        # to numpy to append
+        test_array.append(mel_specgram) 
 
-        test_waveform = test_waveform.detach().numpy()
-        test_array.append(test_waveform)
 os.chdir("../../")
 
-tensor_note =  torch.Tensor(note_array).float()                                            # all data to tenser
+tensor_note =  torch.Tensor(note_array).float()                                                             # all data to tenser
 tensor_index = torch.Tensor(index_array).long()
 tensor_test = torch.Tensor(test_array).float()
+
+print(np.shape(tensor_note))
 
 train_dataset = data.TensorDataset(tensor_note, tensor_index)
 train_loader = data.DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
-        self.conv1 = nn.Sequential(         # input shape (10, 1, 66150) (batchsize, in_chennel, time_stamps)
-            nn.Conv1d(
-                in_channels=1,         
-                out_channels=16,      
-                kernel_size=20,        
-                stride=1,              
-            ),                         
-            nn.Tanh(),                 
-            nn.MaxPool1d(kernel_size=5), 
+        self.conv1 = nn.Sequential(         # input shape (1, 28, 28)
+            nn.Conv2d(
+                in_channels=1,              # input height
+                out_channels=16,            # n_filters
+                kernel_size=5,              # filter size
+                stride=1,                   # filter movement/step
+                padding=2,                  # if want same width and length of this image after Conv2d, padding=(kernel_size-1)/2 if stride=1
+            ),                              # output shape (16, 28, 28)
+            nn.ReLU(),                      # activation
+            nn.MaxPool2d(kernel_size=2),    # choose max value in 2x2 area, output shape (16, 14, 14)
         )
-        self.conv2 = nn.Sequential(      
-            nn.Conv1d(16, 32, 20, 1), 
-            nn.Tanh(),     
-            nn.MaxPool1d(kernel_size=5),              
-        )
-        self.conv3 = nn.Sequential(      
-            nn.Conv1d(32, 64, 20, 1), 
-            nn.Tanh(),     
-            nn.MaxPool1d(kernel_size=5),              
+        self.conv2 = nn.Sequential(         # input shape (16, 14, 14)
+            nn.Conv2d(16, 32, 5, 1, 2),     # output shape (32, 14, 14)
+            nn.ReLU(),                      # activation
+            nn.MaxPool2d(2),                # output shape (32, 7, 7)
         )
         self.out = nn.Sequential(
-            nn.Linear(22272, 100),
-            nn.Tanh(),
-            nn.Linear(100, 4),   # fully connected layer, output 10 classes
-            # nn.Tanh(),
-            # nn.ReLU(),
-            # nn.Linear(40000, 5000),  # fully connected layer, output 10 classes
+            nn.Linear(56320, 1000),   # fully connected layer, output 10 classes
+            nn.ReLU(),
+            nn.Linear(1000, 4),  # fully connected layer, output 10 classes
             # nn.ReLU(),
             # nn.Linear(5000, 100),  # fully connected layer, output 10 classes
             # nn.ReLU(),
@@ -96,7 +97,6 @@ class CNN(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
-        x = self.conv3(x)
         x = x.view(x.size(0), -1)           # flatten the output of conv2 to (batch_size, 32 * 7 * 7)
         output = self.out(x)
         return output, x    # return x for visualization
@@ -138,14 +138,18 @@ for epoch in range(EPOCH):
             if three_times == 4:
                 jump = True
                 break
+    print("start save EPOCH : ", epoch)
+    torch.save(cnn, "./model/harmonica_model/harmonica_error_2d_model_" + str(epoch) + ".pth")
+    torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_2d_params_" + str(epoch) + ".pth")
+    print("saved")
     if jump:
         break
 
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_model/harmonica_error_model.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_params.pth")
+torch.save(cnn, "./model/harmonica_model/harmonica_error_2d_model.pth")
+torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_2d_params.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)
