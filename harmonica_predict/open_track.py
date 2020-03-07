@@ -35,10 +35,10 @@ for index in range(0, length, STEP_SIZE):
     if np.shape(waveform_part)[1] == int(FRAME_SIZE):
         track_array.append(mel_specgram)
 
-tensor_track = torch.Tensor(track_array).float()
+tensor_track = torch.Tensor(track_array)
 
 # load model
-model = torch.load('../model/harmonica_model/harmonica_error_2d_params_10.pth')
+model = torch.load('../model/harmonica_model/harmonica_error_2d_model_15.pth')
 print("loading model...")
 print('-'*50)
 

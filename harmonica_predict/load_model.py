@@ -42,5 +42,6 @@ class CNN(nn.Module):
 
 
 def predict(track, model):
-    predict = model(track)
+    predict, _ = model(track)
+    print(predict)
     return torch.max(predict, 1)[1].data.numpy()

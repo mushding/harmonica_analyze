@@ -4,3 +4,4 @@ dataset/harmonica_test
 dataset/record
 .vscode
 model
+harmonica_predict/__pycache__
