@@ -5,3 +5,4 @@ dataset/record
 .vscode
 model
 harmonica_predict/__pycache__
+front-end/node_modules

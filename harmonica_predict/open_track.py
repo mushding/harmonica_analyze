@@ -7,7 +7,9 @@ import argparse
 
 track_array = []
 RESEMPLE_RATE = 1
-FRAME_SIZE = 44100 / RESEMPLE_RATE
+SECOND = 0.5
+SAMPLE_FREQUANCE = 44100
+FRAME_SIZE = int((SAMPLE_FREQUANCE * SECOND) / RESEMPLE_RATE)
 STEP_SIZE = 5000
 
 def parseArguments():
@@ -26,9 +28,11 @@ length = np.shape(waveform)[0]
 
 for index in range(0, length, STEP_SIZE):
     waveform_part = waveform[index: index + int(FRAME_SIZE)]                            # [44100]             
+    if len(waveform_part) < FRAME_SIZE:
+        break
     waveform_part = waveform_part[np.newaxis, ...]                                      # [1, 44100]      
     waveform_part = torch.from_numpy(waveform_part)	                                    # torch [1, 44100]
-    
+    print(np.shape(waveform_part))
     mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform_part) # torch [1, 128, 221]
     mel_specgram = mel_specgram.detach().numpy()					                    # numpy [1, 128, 221]																	                
     

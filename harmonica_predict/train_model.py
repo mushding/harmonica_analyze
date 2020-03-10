@@ -8,11 +8,16 @@ import torchaudio
 import matplotlib.pyplot as plt
 
 # Hyper Parameters
-RESAMPLE_RATE = 1
 BATCH_SIZE = 150  # num of training examples per minibatch
 EPOCH = 30
 LR = 0.001
-TRAINING_SIZE = 44100 / RESAMPLE_RATE
+
+# dataset Hyper Parameters
+RESAMPLE_RATE = 1
+SECOND = 0.5
+SAMPLE_FREQUANCE = 44100
+FRAME_SIZE = int((SAMPLE_FREQUANCE * SECOND) / RESAMPLE_RATE)
+STEP_SIZE = 5000
 
 index_array = []
 note_array = []
@@ -22,14 +27,14 @@ dataset = ["space", "flat", "double", "normal"]
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
     filename = os.listdir(condition)                                                                        # training data
-    filenum = len(os.listdir(condition))
+    filenum = len(filename)
     print("read wav file : " + condition)
-    for i in range(filenum):
-        print("processing (data) " + condition + " " + str(i))
-        waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	                            # read waveform shape [2, 21748]
+    for file in range(filenum):
+        print("processing (data) " + condition + " " + str(file))
+        waveform, sample_rate = torchaudio.load(condition + '/' + filename[file])	                            # read waveform shape [2, 21748]
         new_sample_rate = sample_rate / RESAMPLE_RATE
         waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(waveform[0,:].view(1,-1))   # shape [1, 5437]
-        waveform = waveform.numpy()[0, :int(TRAINING_SIZE)]													# shape [5437]
+        waveform = waveform.numpy()[0, :int(FRAME_SIZE)]													# shape [5437]
 
         waveform = waveform[np.newaxis, ...]                                                                # shape [1, 5437]
         waveform = torch.from_numpy(waveform)												                # to torch [1, 5437]
@@ -41,12 +46,12 @@ for index, condition in enumerate(dataset):
 
 for condition in dataset:               
     filename = os.listdir(condition)                                                                        # training data
-    for i in range(190):
+    for i in range(250):
         print("processing (testfile) ... " + condition + " " + str(i))
         test_waveform, sample_rate = torchaudio.load(condition + '/' + filename[i])	                        # read waveform shape [2, 66150]
         new_sample_rate = sample_rate / RESAMPLE_RATE
         test_waveform = torchaudio.transforms.Resample(sample_rate, new_sample_rate)(test_waveform[0,:].view(1, -1))
-        test_waveform = test_waveform.numpy()[0, :int(TRAINING_SIZE)]
+        test_waveform = test_waveform.numpy()[0, :int(FRAME_SIZE)]
 
         test_waveform = test_waveform[np.newaxis, ...]                                          
         test_waveform = torch.from_numpy(test_waveform)
@@ -85,7 +90,7 @@ class CNN(nn.Module):
             nn.MaxPool2d(2),                # output shape (32, 7, 7)
         )
         self.out = nn.Sequential(
-            nn.Linear(56320, 1000),   # fully connected layer, output 10 classes
+            nn.Linear(27648 , 1000),   # fully connected layer, output 10 classes
             nn.ReLU(),
             nn.Linear(1000, 4),  # fully connected layer, output 10 classes
             # nn.ReLU(),
