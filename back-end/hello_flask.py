@@ -1,15 +1,44 @@
-from flask import Flask,redirect
+from flask import Flask, redirect,request
 from flask import url_for
+from flask import render_template
+from flask import send_file, send_from_directory,safe_join,abort
+
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    return 'hello man'
+app.config["CLIENT_WAV"] = "/home/micro/harmonica_train/harmonica_project/back-end/static/HarmonicaData/wav"
 
-@app.route('/user/<username>')
-def username(username):
-    return 'i am ' + username
+
+
+@app.route('/loginurl',methods = ['GET','POST'])
+def login():
+    if request.method =='POST':
+        return redirect(url_for('hello',username = request.form.get('username')))
+
+    return render_template('login.html')
+
+@app.route('/get-wav/<wav_name>')
+def get_wav(wav_name):
+    try:
+        return send_from_directory(app.config["CLIENT_WAV"], filename = wav_name, as_attachment = True)
+
+    except FileNotFoundError:
+        abort(404)
+
+
+
+
+
+@app.route('/para/<user>')
+def index(user):
+    return  render_template('abc.html',user_template=user)
+
+
+@app.route('/hello/<username>')
+def hello(username):
+    return render_template('hello.html',username = username)
+
+
 
 @app.route('/age/<int:age>')
 def userage(age):
@@ -30,5 +59,5 @@ def b():
     
 if __name__ == '__main__':
     app.debug = True
-    app.run()
+    app.run(host="192.168.50.225")
 

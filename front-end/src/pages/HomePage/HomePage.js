@@ -6,20 +6,19 @@ export default class HomePage extends Component{
         super(props);
     }
     componentDidMount(){
-        const aud = document.querySelector('#song');
-        const params = {
+        // const aud = document.querySelector('#song');
+        this.waveSurfer = WaveSurfer.create({     
             barWidth: 1,
-            cursorWidth: 1,
             container: '#waveform',
             backend: 'MediaElement',
             height: 80,
             progressColor: '#4a74a5',
             responsive: true,
             waveColor: '#ccc',
+            cursorWidth: 1,
             cursorColor: '#4a74a5',
-        };
-        this.waveSurfer = WaveSurfer.create(params);
-        this.waveSurfer.load(aud);
+        });
+        this.waveSurfer.load('http://192.168.50.225:5000/get-wav/flat_normal_double.wav');
     }
     playIt = () => {
         this.waveSurfer.playPause();
@@ -31,7 +30,6 @@ export default class HomePage extends Component{
                     Play
                 </button>
                 <div id='waveform'>
-                    <audio id='song' src="https://reelcrafter-east.s3.amazonaws.com/aux/test.m4a"/>
                 </div>
             </div>
         );
