@@ -1,0 +1,10 @@
+flask_wtf
+flask_bootstrap
+flask_script
+flask_bcrypt
+flask_sqlchemy
+flask_migrate
+flask_mail
+flask_login
+flask_babel
+flask_markdown

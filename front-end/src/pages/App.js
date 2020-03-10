@@ -1,10 +1,14 @@
 import React from 'react';
-import { Redirect, Route } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter, Switch } from 'react-router-dom';
 import HomePage from './HomePage/HomePage'
 
 function App() {
     return (
-		<Route path="/"><HomePage/></Route>
+        <BrowserRouter>
+            <Switch>
+                <Route path="/"><HomePage/></Route>
+            </Switch>
+        </BrowserRouter>
     );
 }
 
