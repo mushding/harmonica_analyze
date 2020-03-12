@@ -6,7 +6,7 @@ function App() {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path="/"><HomePage/></Route>
+                <Route path="/" render={() => <HomePage/>}/>
             </Switch>
         </BrowserRouter>
     );
