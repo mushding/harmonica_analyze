@@ -9,6 +9,9 @@ app = Flask(__name__)
 app.config["CLIENT_WAV"] = "/home/micro/harmonica_train/harmonica_project/back-end/static/HarmonicaData/wav/"
 
 
+@app.route('/')
+def home():
+    return 'HOME'
 
 @app.route('/loginurl',methods = ['GET','POST'])
 def login():
