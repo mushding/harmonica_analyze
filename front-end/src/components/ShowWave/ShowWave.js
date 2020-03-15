@@ -5,16 +5,26 @@ import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline';
 import './styles.css';
+import Collapse from '@material-ui/core/Collapse';
+import {
+    PlayArrow,
+    Pause,
+    SyncDisabledOutlined,
+    SyncOutlined,
+} from '@material-ui/icons'
 
 export default class ShowWave extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            buttonIsShowRegions: true,
+            buttonIsPlay: false,
             buttonIsLoop: false,
+            buttonIsShowRegions: true,
             buttonIsShowMiniMap: true,
             buttonIsShowTimeline: true,
             buttonIsShowCursor: true,
+            checked_1: false,
+            checked_2: false,
         }
     }
     initWavesurfer = () => {
@@ -24,10 +34,10 @@ export default class ShowWave extends React.Component{
             container: '#waveform',
             backend: 'MediaElement',
             height: 200,
-            progressColor: '#4a74a5',
+            progressColor: '#005266',
             responsive: true,
-            waveColor: '#ccc',
-            cursorColor: '#4a74a5',
+            waveColor: '#fff',
+            cursorColor: '#005266',
             plugins: [
                 RegionsPlugin.create(),
             ]
@@ -44,18 +54,35 @@ export default class ShowWave extends React.Component{
             this.region = region
         })
         wavesurfer.on('region-out', this.onPlayEnd)
-        wavesurfer.on('ready', this.play)
+        // wavesurfer.on('ready', this.play)
     }
     onPlayEnd = () => {
         this.state.buttonIsLoop ? this.wavesurfer.play() : this.wavesurfer.play(this.region.start)
     }
     createRegions = () => {
-        fetch("http://192.168.50.225:5000/sendsec")
+        fetch("http://192.168.50.225:5000/getoutput/" + this.props.file)
             .then((response) => {
-                return response.json()
-            })
-            .then((jsonData) => {
-                this.wavesurfer.addRegion(jsonData)           
+                let data_promise = Promise.resolve(response.json())
+                data_promise.then((data) => {
+                    console.log(data)
+                    return data
+                }).then((jsonData) => {
+                    let len = jsonData.length
+                    for (let i = 0; i < len; i++){
+                        console.log(jsonData[i])
+                        this.wavesurfer.addRegion(jsonData[i]) 
+                    }
+                    // let forEach = jsonData.forEach((start, end, type, drag, resize) => {
+                    //     console.log(start, end, type, drag, resize)
+                    //     this.wavesurfer.addRegion({
+                    //         start: start,
+                    //         end: end,
+                    //         type: type,
+                    //         drag: drag,
+                    //         resize: resize,
+                    //     })           
+                    // })
+                })
             })
             .catch((error) => {
                 console.log(error)
@@ -81,20 +108,45 @@ export default class ShowWave extends React.Component{
             showTime: true,
             opacity: 1,
             hideOnBlur: true,
+            color: "#005266",
             customShowTimeStyle: {
-                'background-color': '#000',
+                'background-color': '#005266',
                 color: '#fff',
-                padding: '2px',
-                'font-size': '10px'
+                padding: '3px',
+                'font-size': '15px'
             }
         })).initPlugin('cursor')
     }
     componentDidMount(){
+        console.log(this.props.file)
+        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
+        console.log(url)
         this.initWavesurfer()
-        this.wavesurfer.load(require("./double.wav"))
+        this.wavesurfer.load(url)
+        
+        var that = this;
+		setTimeout(() => {
+			that.show();
+		}, that.props.wait);
     }
-    play = () => {
+    show = () => {
+        var that = this
+		var delay = (s) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve,s); 
+            });
+        };
+        delay().then(() => {
+            that.setState({checked_1: true})
+            return delay(800); 
+        }).then(() => {
+            that.setState({checked_2: true})
+        });
+    }
+    togglePlay = () => {
+        const bool = this.state.buttonIsPlay
         this.wavesurfer.playPause();
+        this.setState({ buttonIsPlay: !bool })
     }
     toggleClearRegions = () => {
         const bool = this.state.buttonIsShowRegions
@@ -123,30 +175,42 @@ export default class ShowWave extends React.Component{
     render(){
         return (
             <div>
-                <button onClick={this.play}>
-                    Play
-                </button>
-                <button onClick={this.toggleClearRegions}>
-                    { this.state.buttonIsShowRegions ? "disable regions" : "able regions" }
-                </button>
-                <button onClick={this.toggleLoop}>
-                    { this.state.buttonIsLoop ? "able loop" : "disable loop" }
-                </button>
-                <button onClick={this.toggleShowMiniMap}>
-                    { this.state.buttonIsShowMiniMap ? "close minimap" : "open minimap" }
-                </button>
-                <button onClick={this.toggleShowTimeline}>
-                    { this.state.buttonIsShowTimeline ? "close timeline" : "open timeline" }
-                </button>
-                <button onClick={this.toggleShowCursor}>
-                    { this.state.buttonIsShowCursor ? "close cursor" : "open sursor"}
-                </button>
-                <div class="waveContainer">
-                    <div id='waveform'></div>
-                    <br/>
-                    <div id='wave-minimap'></div>
-                    <div id='wave-timeline'></div>
-                </div>
+                <Collapse in={this.state.checked_1} timeout={1300}> 
+                    <div className="waveCursorContainer">
+                        <div className="waveContainer">
+                            <div id='waveform'></div>
+                            <br/>
+                            <div id='wave-minimap'></div>
+                            <div id='wave-timeline'></div>
+                        </div>
+                    </div>
+                </Collapse>
+                <Collapse in={this.state.checked_2} timeout={2000}>
+                    <div className="buttonContainer">
+                        <button onClick={this.togglePlay}>
+                            <div className="buttonIcon">
+                                { this.state.buttonIsPlay ? <Pause/> : <PlayArrow/> }
+                            </div>
+                        </button>
+                        <button onClick={this.toggleLoop}>
+                            <div className="buttonIcon">
+                                { this.state.buttonIsLoop ? <SyncOutlined/> : <SyncDisabledOutlined/> }
+                            </div>
+                        </button>
+                        <button onClick={this.toggleClearRegions}>
+                            { this.state.buttonIsShowRegions ? "disable regions" : "able regions" }
+                        </button>
+                        <button onClick={this.toggleShowMiniMap}>
+                            { this.state.buttonIsShowMiniMap ? "close minimap" : "open minimap" }
+                        </button>
+                        <button onClick={this.toggleShowTimeline}>
+                            { this.state.buttonIsShowTimeline ? "close timeline" : "open timeline" }
+                        </button>
+                        <button onClick={this.toggleShowCursor}>
+                            { this.state.buttonIsShowCursor ? "close cursor" : "open sursor"}
+                        </button>
+                    </div>
+                </Collapse>
             </div>
         );
     }

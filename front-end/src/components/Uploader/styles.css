@@ -1,0 +1,8 @@
+.formContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-attachment: fixed;
+    background: #91c5e7;
+    padding: 2rem 0rem 2rem 0rem;
+}

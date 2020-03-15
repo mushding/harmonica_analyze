@@ -1,3 +1,23 @@
 .waveContainer {
-    position: relative
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.waveCursorContainer {
+    background-attachment: fixed;
+    background: #91c5e7;
+    padding: 2rem 0rem 2rem 0rem;
+}
+
+.buttonContainer {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 2rem 0rem 2rem 0rem;
+}
+
+.buttonContainer button{
+    margin: 0rem 0.5rem 0rem 0.5rem;
 }

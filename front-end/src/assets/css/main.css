@@ -95,7 +95,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #44759b;
+		background: #65a3cc;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -1102,6 +1102,15 @@ input, select, textarea {
 	input[type="button"],
 	button {
 		line-height: calc(2.75rem - 2px);
+	}
+
+	input[type="submit"],
+	input[type="reset"],
+	input[type="button"],
+	button .buttonIcon {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
 	}
 
 /* BG */
