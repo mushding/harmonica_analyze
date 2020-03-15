@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor';
 import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions';
@@ -6,7 +6,7 @@ import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline';
 import './styles.css';
 
-export default class ShowWave extends Component{
+export default class ShowWave extends React.Component{
     constructor(props){
         super(props);
         this.state = {
