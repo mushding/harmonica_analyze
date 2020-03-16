@@ -75,7 +75,7 @@ class Uploader extends React.Component {
                                 </div>
                                 <br />
                                 <div>
-                                    <button>Upload</button>
+                                    <button disabled={this.state.progressState === 'progress'}>Upload</button>
                                 </div>
                             </form>
                             {this.state.progressState === 'success' ? (

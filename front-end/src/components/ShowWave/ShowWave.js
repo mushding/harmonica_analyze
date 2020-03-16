@@ -12,6 +12,7 @@ import {
     Pause,
     SyncDisabledOutlined,
     SyncOutlined,
+    Refresh,
 } from '@material-ui/icons'
 
 export default class ShowWave extends React.Component{
@@ -31,6 +32,16 @@ export default class ShowWave extends React.Component{
         }
     }
     initWavesurfer = () => {
+        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
+        this.createWavesurfer()
+        if (this.state.regionArr.length === 0) {
+            this.createRegions()
+        } else {
+            this.reCreateRegions()
+        }
+        this.wavesurfer.load(url)
+    }
+    createWavesurfer = () => {
         const options = {
             barWidth: 1,
             cursorWidth: 1,
@@ -90,6 +101,10 @@ export default class ShowWave extends React.Component{
             this.wavesurfer.addRegion(this.state.regionArr[i]) 
         }
     }
+    reCreateWavesurfer = () => {
+        this.wavesurfer.destroy()
+        this.initWavesurfer()
+    }
     createMinimap = () => {
         this.wavesurfer.addPlugin(MinimapPlugin.create({
             container: '#wave-minimap',
@@ -118,17 +133,8 @@ export default class ShowWave extends React.Component{
         })).initPlugin('cursor')
     }
     componentDidMount(){
+        this.initWavesurfer()
         var that = this;
-        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
-        let getData = new Promise((resolve, reject) => {
-            that.initWavesurfer()
-            resolve()
-        })
-        getData.then(() => {
-            that.wavesurfer.load(url)
-        }).then(() => {
-            this.createRegions()
-        })
 		setTimeout(() => {
 			that.show();
 		}, that.props.wait);
@@ -212,6 +218,11 @@ export default class ShowWave extends React.Component{
                         </button>
                         <button onClick={this.toggleShowCursor} disabled={this.state.progressState}>
                             { this.state.buttonIsShowCursor ? "close cursor" : "open sursor"}
+                        </button>
+                        <button onClick={this.reCreateWavesurfer} disabled={this.state.progressState}>
+                            <div className="buttonIcon">
+                                <Refresh/>
+                            </div>
                         </button>
                         { this.state.progressState  ? (
                             <div className="progressContainer">
