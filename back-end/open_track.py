@@ -12,7 +12,8 @@ class Open_track:
         self.SECOND = 0.5
         self.SAMPLE_FREQUANCE = 44100
         self.FRAME_SIZE = int((self.SAMPLE_FREQUANCE * self.SECOND) / self.RESEMPLE_RATE)
-        self.STEP_SIZE = 5000
+        self.STEP_SIZE = 4410
+        self.SECONDforarray = 0.1
 
     def readsound(self, wav_name):    
         # read sound track to predict
@@ -57,7 +58,7 @@ class Open_track:
         print(output)
         return output
 
-
+    
 
     def findwrongnote(self,output):
         outputarray = []
@@ -69,35 +70,27 @@ class Open_track:
                 continue       
 
             if output[index_i] == 1:
-                print("i = " + str(index_i))
-                Dout["start"] = (self.SECOND * index_i)
+                Dout["start"] = round((self.SECONDforarray * index_i),1)
                 for index_j in range(len(output[index_i:])):
                     if output[index_i + index_j] == output[index_i]:
                         index_j+=1
                     else:
-                        #print("j = " + str(index_j))
-                        Dout["end"] = self.SECOND * (index_i + index_j)
+                        Dout["end"] = round(self.SECONDforarray * (index_i + index_j),1)
                         Dout["type"] = '1'
                         skip_until = (index_i + index_j)
-                        #print("i2 = " + str(skip_until))
                         outputarray.append(dict(Dout))
-                        #print(Dout)
                         break
 
             if output[index_i] == 2:
-                print("i = " + str(index_i))
-                Dout["start"] = (self.SECOND * index_i)
+                Dout["start"] = round((self.SECONDforarray * index_i),1)
                 for index_j in range(len(output[index_i:])):
                     if output[index_i + index_j] == output[index_i]:
                         index_j+=1
-                    else:
-                        #print("j = " + str(index_j))
-                        Dout["end"] = self.SECOND * (index_i + index_j)
+                    else:                        
+                        Dout["end"] = round(self.SECONDforarray * (index_i + index_j),1)
                         Dout["type"] = '2'
-                        skip_until = (index_i + index_j)
-                        #print("i2 = " + str(skip_until))
-                        outputarray.append(dict(Dout))
-                        #print(Dout)
+                        skip_until = (index_i + index_j)                       
+                        outputarray.append(dict(Dout))                        
                         break
               
 

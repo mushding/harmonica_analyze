@@ -5,6 +5,7 @@ import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions';
 import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline';
 import './styles.css';
+import RegionMessage from '../RegionMessage/RegionMessage'
 import Collapse from '@material-ui/core/Collapse';
 import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import {
@@ -20,16 +21,35 @@ export default class ShowWave extends React.Component{
         super(props);
         this.state = {
             regionArr: [],
+            regionContent: {},
             buttonIsPlay: false,
             buttonIsLoop: false,
             buttonIsShowRegions: true,
             buttonIsShowMiniMap: true,
             buttonIsShowTimeline: true,
             buttonIsShowCursor: true,
+            buttonRegionClick: false,
             checked_1: false,
             checked_2: false,
             progressState: true,
         }
+    }
+    handdleRegionClick = (region) => {
+        console.log(region)
+        let that = this
+		let delay = (s) => {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, s); 
+            });
+        };
+        delay().then(() => {
+            that.setState({ buttonRegionClick: false })
+            return delay(1000); 
+        }).then(() => {
+            that.setState({ regionContent: region })
+        }).then(() => {
+            that.setState({ buttonRegionClick: true })
+        })
     }
     initWavesurfer = () => {
         const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
@@ -67,7 +87,7 @@ export default class ShowWave extends React.Component{
             this.region = region
         })
         wavesurfer.on('region-out', this.onPlayEnd)
-        // wavesurfer.on('ready', this.play)
+        wavesurfer.on('region-click', this.handdleRegionClick)
     }
     onPlayEnd = () => {
         this.state.buttonIsLoop ? this.wavesurfer.play() : this.wavesurfer.play(this.region.start)
@@ -77,16 +97,35 @@ export default class ShowWave extends React.Component{
             .then((response) => {
                 let data_promise = Promise.resolve(response.json())
                 data_promise.then((data) => {
-                    console.log(data)
-                    this.setState({ regionArr: data })
                     return data
                 }).then((jsonData) => {
                     this.setState({ progressState: false })
                     let len = jsonData.length
+                    let regionColor = undefined
+                    let regionStateArr = []
                     for (let i = 0; i < len; i++){
-                        console.log(jsonData[i])
-                        this.wavesurfer.addRegion(jsonData[i]) 
+                        const regionData = jsonData[i]
+                        const errorType = jsonData[i]["type"]
+                        switch (errorType){
+                            case "1":
+                                regionColor = "hsla(197, 40%, 23%, 0.3)"
+                                break;
+                            case "2":
+                                regionColor = "hsla(195, 63%, 23%, 0.2)"
+                                break;
+                        }
+                        const regionDir = {
+                            start: regionData["start"],
+                            end: regionData["end"],
+                            drag: regionData["drag"],
+                            resize: regionData["resize"],
+                            attributes: regionData["type"],
+                            color: regionColor,
+                        }
+                        regionStateArr.push(regionDir)
+                        this.wavesurfer.addRegion(regionDir) 
                     }
+                    this.setState({ regionArr: regionStateArr})
                 })
             })
             .catch((error) => {
@@ -104,6 +143,7 @@ export default class ShowWave extends React.Component{
     reCreateWavesurfer = () => {
         this.wavesurfer.destroy()
         this.initWavesurfer()
+        this.setState({ buttonRegionClick: false })
     }
     createMinimap = () => {
         this.wavesurfer.addPlugin(MinimapPlugin.create({
@@ -235,6 +275,10 @@ export default class ShowWave extends React.Component{
                         ) }
                     </div>
                 </Collapse>
+                <Collapse in={this.state.buttonRegionClick} timeout={1000}>
+                    <RegionMessage region={this.state.regionContent}/>
+                </Collapse>
+               
             </div>
         );
     }

@@ -3,6 +3,7 @@ import './styles.css'
 import Collapse from '@material-ui/core/Collapse';
 import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import ShowWave from '../ShowWave/ShowWave'
+import BackupIcon from '@material-ui/icons/Backup';
 class Uploader extends React.Component {
     constructor(props) {
         super(props);
@@ -32,6 +33,8 @@ class Uploader extends React.Component {
         })
     }
     handleUploadImage = (ev) => {
+        if (this.uploadInput.files[0] === undefined)
+            return;
         if (this.state.progressState !== 'idle') {
             this.setState({ progressState: 'idle' });
             return;
@@ -39,6 +42,7 @@ class Uploader extends React.Component {
         this.setState({ progressState: 'progress' });
         
         ev.preventDefault();
+        console.log(this.uploadInput.files[0])
         const data = new FormData();
         data.append('file', this.uploadInput.files[0]);
         this.setState({ filename: this.uploadInput.files[0].name })
@@ -70,11 +74,13 @@ class Uploader extends React.Component {
                     <Collapse in={this.state.checked} timeout={2500}>
                         <div className="uploadContainer">
                             <form onSubmit={this.handleUploadImage} className="formContainer">
-                                <div>
-                                    <input ref={(ref) => { this.uploadInput = ref; }} type="file" />
+                                <div className="fromPadding">
+                                    <label htmlFor="file-upload" className="custom-file-upload">
+                                        Select wav file HERE
+                                    </label>
+                                    <input ref={(ref) => { this.uploadInput = ref; }} type="file" id="file-upload" accept="audio/wav"/>
                                 </div>
-                                <br />
-                                <div>
+                                <div className="fromPadding">
                                     <button disabled={this.state.progressState === 'progress'}>Upload</button>
                                 </div>
                             </form>

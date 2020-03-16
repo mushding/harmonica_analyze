@@ -1,0 +1,13 @@
+.messageContainer {
+    background-attachment: fixed;
+    background: #91c5e7;
+    display: flex;
+    flex-direction: column;
+}
+
+.textContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 1rem;
+}

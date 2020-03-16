@@ -6,18 +6,12 @@ from load_model import CNN
 from werkzeug.utils import secure_filename
 import os 
 
-# <--- global varible area ---> 
-UPLOAD_FOLDER = '../front-end/src'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
-
 # <--- start flask --->
 app = Flask(__name__)
 CORS(app)
 
 # <--- app config area --->
-app.config["CLIENT_WAV"] = "/home/micro/harmonica_train/harmonica_project/back-end/static/HarmonicaData/wav/"
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+app.config["CLIENT_WAV"] = "../back-end/static/HarmonicaData/wav"
 
 @app.route('/')
 def home():
@@ -39,27 +33,14 @@ def Opentrack(wav_name):
 def getoutput(wav_name):
     return Opentrack(wav_name)
 
-# <--- return harmonica error version and second --->
-@app.route('/sendsec')
-def send():
-    sec = {
-            'start': 3, 
-            'end': 5,
-            'drag': False,
-            'resize': False,
-            'type': 0,
-        }
-    return jsonify(sec)
-
 # <--- front end upload file to local dir --->
 @app.route('/upload', methods=['POST'])
 def fileUpload():
-    target = os.path.join(UPLOAD_FOLDER, 'sound')
-    if not os.path.isdir(target):
-        os.mkdir(target)
+    if not os.path.isdir(app.config["CLIENT_WAV"]):
+        os.mkdir(app.config["CLIENT_WAV"])
     file = request.files['file'] 
     filename = secure_filename(file.filename)
-    destination = "/".join([target, filename])
+    destination = "/".join([app.config["CLIENT_WAV"], filename])
     file.save(destination)
     session['uploadFilePath'] = destination
     response = "Whatever you wish too return"
@@ -68,8 +49,7 @@ def fileUpload():
 @app.route('/wav/<wav_name>')
 def streamwav(wav_name):
     def generate():
-        target = os.path.join(app.config["UPLOAD_FOLDER"], 'sound')
-        target = os.path.join(target, str(wav_name))
+        target = os.path.join(app.config["CLIENT_WAV"], str(wav_name))
         with open(target, "rb") as fwav:
             data = fwav.read(1024)
             while data:
