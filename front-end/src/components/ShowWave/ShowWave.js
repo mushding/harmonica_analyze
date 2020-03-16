@@ -6,6 +6,7 @@ import MinimapPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.minimap';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline';
 import './styles.css';
 import Collapse from '@material-ui/core/Collapse';
+import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import {
     PlayArrow,
     Pause,
@@ -17,6 +18,7 @@ export default class ShowWave extends React.Component{
     constructor(props){
         super(props);
         this.state = {
+            regionArr: [],
             buttonIsPlay: false,
             buttonIsLoop: false,
             buttonIsShowRegions: true,
@@ -25,6 +27,7 @@ export default class ShowWave extends React.Component{
             buttonIsShowCursor: true,
             checked_1: false,
             checked_2: false,
+            progressState: true,
         }
     }
     initWavesurfer = () => {
@@ -44,7 +47,6 @@ export default class ShowWave extends React.Component{
         };
         const wavesurfer = WaveSurfer.create(options);
         this.wavesurfer = wavesurfer
-        this.createRegions()
         this.createMinimap()
         this.createTimeline()
         this.createCursor()
@@ -65,23 +67,15 @@ export default class ShowWave extends React.Component{
                 let data_promise = Promise.resolve(response.json())
                 data_promise.then((data) => {
                     console.log(data)
+                    this.setState({ regionArr: data })
                     return data
                 }).then((jsonData) => {
+                    this.setState({ progressState: false })
                     let len = jsonData.length
                     for (let i = 0; i < len; i++){
                         console.log(jsonData[i])
                         this.wavesurfer.addRegion(jsonData[i]) 
                     }
-                    // let forEach = jsonData.forEach((start, end, type, drag, resize) => {
-                    //     console.log(start, end, type, drag, resize)
-                    //     this.wavesurfer.addRegion({
-                    //         start: start,
-                    //         end: end,
-                    //         type: type,
-                    //         drag: drag,
-                    //         resize: resize,
-                    //     })           
-                    // })
                 })
             })
             .catch((error) => {
@@ -89,6 +83,12 @@ export default class ShowWave extends React.Component{
                 return false
             })
         return true
+    }
+    reCreateRegions = () => {
+        let arrLen = this.state.regionArr.length
+        for(let i = 0; i < arrLen; i++){
+            this.wavesurfer.addRegion(this.state.regionArr[i]) 
+        }
     }
     createMinimap = () => {
         this.wavesurfer.addPlugin(MinimapPlugin.create({
@@ -118,22 +118,26 @@ export default class ShowWave extends React.Component{
         })).initPlugin('cursor')
     }
     componentDidMount(){
-        console.log(this.props.file)
-        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
-        console.log(url)
-        this.initWavesurfer()
-        this.wavesurfer.load(url)
-        
         var that = this;
+        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
+        let getData = new Promise((resolve, reject) => {
+            that.initWavesurfer()
+            resolve()
+        })
+        getData.then(() => {
+            that.wavesurfer.load(url)
+        }).then(() => {
+            this.createRegions()
+        })
 		setTimeout(() => {
 			that.show();
 		}, that.props.wait);
     }
     show = () => {
-        var that = this
-		var delay = (s) => {
+        let that = this
+		let delay = (s) => {
             return new Promise((resolve, reject) => {
-                setTimeout(resolve,s); 
+                setTimeout(resolve, s); 
             });
         };
         delay().then(() => {
@@ -150,7 +154,7 @@ export default class ShowWave extends React.Component{
     }
     toggleClearRegions = () => {
         const bool = this.state.buttonIsShowRegions
-        bool ? this.wavesurfer.clearRegions() : this.createRegions()
+        bool ? this.wavesurfer.clearRegions() : this.reCreateRegions()
         this.setState({ buttonIsShowRegions: !bool })
     }
     toggleLoop = () => {
@@ -187,28 +191,37 @@ export default class ShowWave extends React.Component{
                 </Collapse>
                 <Collapse in={this.state.checked_2} timeout={2000}>
                     <div className="buttonContainer">
-                        <button onClick={this.togglePlay}>
+                        <button onClick={this.togglePlay} disabled={this.state.progressState}>
                             <div className="buttonIcon">
                                 { this.state.buttonIsPlay ? <Pause/> : <PlayArrow/> }
                             </div>
                         </button>
-                        <button onClick={this.toggleLoop}>
+                        <button onClick={this.toggleLoop} disabled={this.state.progressState}>
                             <div className="buttonIcon">
                                 { this.state.buttonIsLoop ? <SyncOutlined/> : <SyncDisabledOutlined/> }
                             </div>
                         </button>
-                        <button onClick={this.toggleClearRegions}>
+                        <button onClick={this.toggleClearRegions} disabled={this.state.progressState}>
                             { this.state.buttonIsShowRegions ? "disable regions" : "able regions" }
                         </button>
-                        <button onClick={this.toggleShowMiniMap}>
+                        <button onClick={this.toggleShowMiniMap} disabled={this.state.progressState}>
                             { this.state.buttonIsShowMiniMap ? "close minimap" : "open minimap" }
                         </button>
-                        <button onClick={this.toggleShowTimeline}>
+                        <button onClick={this.toggleShowTimeline} disabled={this.state.progressState}>
                             { this.state.buttonIsShowTimeline ? "close timeline" : "open timeline" }
                         </button>
-                        <button onClick={this.toggleShowCursor}>
+                        <button onClick={this.toggleShowCursor} disabled={this.state.progressState}>
                             { this.state.buttonIsShowCursor ? "close cursor" : "open sursor"}
                         </button>
+                        { this.state.progressState  ? (
+                            <div className="progressContainer">
+                                <ColorCircularProgress/>
+                            </div>
+                        ) : (
+                            <Collapse in={this.state.progressState} timeout={2000}>
+                                <div></div>
+                            </Collapse>
+                        ) }
                     </div>
                 </Collapse>
             </div>

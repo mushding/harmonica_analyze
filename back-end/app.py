@@ -68,7 +68,9 @@ def fileUpload():
 @app.route('/wav/<wav_name>')
 def streamwav(wav_name):
     def generate():
-        with open(app.config["CLIENT_WAV"] + str(wav_name), "rb") as fwav:
+        target = os.path.join(app.config["UPLOAD_FOLDER"], 'sound')
+        target = os.path.join(target, str(wav_name))
+        with open(target, "rb") as fwav:
             data = fwav.read(1024)
             while data:
                 yield data
