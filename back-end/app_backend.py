@@ -1,5 +1,5 @@
 from flask import Flask, redirect, request, url_for, jsonify, session
-from flask import app, Response, send_file
+from flask import app, Response, send_file, render_template
 from flask_cors import CORS
 from open_track import Open_track
 from load_model import CNN
@@ -7,15 +7,18 @@ from werkzeug.utils import secure_filename
 import os 
 
 # <--- start flask --->
-app = Flask(__name__)
-CORS(app)
+app = Flask(__name__, template_folder="templates", static_folder="static", static_url_path="/back-end/static")
 
 # <--- app config area --->
 app.config["CLIENT_WAV"] = "../back-end/static/HarmonicaData/wav"
 
+@app.route('/<path:path>')
+def catch_all(path):
+    return 'You want path: %s' % path
+
 @app.route('/')
 def home():
-    return 'HOME'
+    return render_template('index.html')
 
 def Opentrack(wav_name):
         open = Open_track()
@@ -61,5 +64,5 @@ def streamwav(wav_name):
 if __name__ == '__main__':
     app.secret_key = os.urandom(24)
     app.debug = True
-    app.run(host="192.168.50.225")    
+    app.run(host="0.0.0.0", port=80)    
 

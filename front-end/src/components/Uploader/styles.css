@@ -60,3 +60,8 @@ input[type="file"] {
 .fromPadding {
     padding: 0rem 0.5rem;
 }
+
+.selectButton {
+    margin-top: 2.15rem;
+    margin-left: 0.5rem;
+}

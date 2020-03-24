@@ -17,10 +17,13 @@
     "wavesurfer.js": "^3.3.1"
   },
   "scripts": {
+    "dev": "webpack-dev-server --disableHostCheck=true",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prebuild":"rm -rf ../back-end/templates/index.html && rm -rf ../back-end/static/build",
+    "postbuild": "mv build/index.html ../back-end/templates/ &&  mv build ../back-end/static/"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -36,5 +39,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "homepage": "../back-end/static/build"
 }

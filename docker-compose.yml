@@ -1,0 +1,30 @@
+version: "3.7"
+services: 
+  react_har:
+    container_name: react_har
+    build: 
+      context: ./front-end
+    ports: 
+      - "80:80"
+      - "443:443"
+    volumes: 
+      - "./front-end:/app"
+    networks: 
+      - "frontend"
+    depends_on: 
+      - flask_har
+    restart: unless-stopped
+
+  flask_har:
+    build: 
+      context: ./back-end
+    container_name: flask_har
+    ports: 
+      - "5000:5000"
+    networks: 
+      - "frontend"
+
+networks: 
+  frontend:
+    driver: bridge
+

@@ -10,7 +10,7 @@ RESEMPLE_RATE = 1
 SECOND = 0.5
 SAMPLE_FREQUANCE = 44100
 FRAME_SIZE = int((SAMPLE_FREQUANCE * SECOND) / RESEMPLE_RATE)
-STEP_SIZE = 5000
+STEP_SIZE = 4410
 
 def parseArguments():
     parser = argparse.ArgumentParser()

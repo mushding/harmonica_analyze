@@ -52,7 +52,7 @@ export default class ShowWave extends React.Component{
         })
     }
     initWavesurfer = () => {
-        const url = "http://192.168.50.225:5000/wav/" + String(this.props.file)
+        const url = "https://www.haranalyzer.site/wav/" + String(this.props.file)
         this.createWavesurfer()
         if (this.state.regionArr.length === 0) {
             this.createRegions()
@@ -93,7 +93,7 @@ export default class ShowWave extends React.Component{
         this.state.buttonIsLoop ? this.wavesurfer.play() : this.wavesurfer.play(this.region.start)
     }
     createRegions = () => {
-        fetch("http://192.168.50.225:5000/getoutput/" + this.props.file)
+        fetch("https://www.haranalyzer.site/getoutput/" + this.props.file, {})
             .then((response) => {
                 let data_promise = Promise.resolve(response.json())
                 data_promise.then((data) => {
@@ -112,6 +112,8 @@ export default class ShowWave extends React.Component{
                                 break;
                             case "2":
                                 regionColor = "hsla(195, 63%, 23%, 0.2)"
+                                break;
+                            default:
                                 break;
                         }
                         const regionDir = {

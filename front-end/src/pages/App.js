@@ -1,16 +1,20 @@
 // /src/App.js
 import React, { Component } from 'react';
-import { BrowserRouter, Redirect, Route } from 'react-router-dom';
+import { HashRouter, Route, Redirect, Switch } from 'react-router-dom';
 import HomePage from './HomePage/HomePage';
 import StartPage from './StartPage/StartPage'
+import RecordPage from './RecordPage/RecordPage'
 class App extends Component {
     render() {
         return (
-            <BrowserRouter>
-                <Route exact path="/" render={() => <Redirect to="/home"/>} />
-                <Route exact path="/home" render={() => <HomePage/>} />
-                <Route exact path="/start" render={() => <StartPage/>}/>
-            </BrowserRouter>
+            <HashRouter>
+                <Switch>
+                    <Route exact path="/" render={() => <Redirect to="/home"/>} />
+                    <Route path="/home" component={HomePage} />
+                    <Route path="/start" component={StartPage} />
+                    <Route path="/record" component={RecordPage} />
+                </Switch>
+            </HashRouter>
         );
     }
 }

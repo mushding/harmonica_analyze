@@ -44,7 +44,7 @@ class Open_track:
 
     def loadmodel(self):
         # load model
-        model = torch.load('../model/harmonica_model/harmonica_error_2d_model_15.pth')
+        model = torch.load('../model/harmonica_2d_ver3/harmonica_error_2d_model_10.pth')
         print("loading model...")
         print('-'*50)
 

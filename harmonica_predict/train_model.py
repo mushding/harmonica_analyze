@@ -144,8 +144,8 @@ for epoch in range(EPOCH):
                 jump = True
                 break
     print("start save EPOCH : ", epoch)
-    torch.save(cnn, "./model/harmonica_model/harmonica_error_2d_model_" + str(epoch) + ".pth")
-    torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_2d_params_" + str(epoch) + ".pth")
+    torch.save(cnn, "./model/harmonica_2d_ver3/harmonica_error_2d_model_" + str(epoch) + ".pth")
+    torch.save(cnn.state_dict(), "./model/harmonica_2d_ver3/harmonica_error_2d_params_" + str(epoch) + ".pth")
     print("saved")
     if jump:
         break
@@ -153,8 +153,8 @@ for epoch in range(EPOCH):
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_model/harmonica_error_2d_model.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_model/harmonica_error_2d_params.pth")
+torch.save(cnn, "./model/harmonica_2d_ver3/harmonica_error_2d_model.pth")
+torch.save(cnn.state_dict(), "./model/harmonica_2d_ver3/harmonica_error_2d_params.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)

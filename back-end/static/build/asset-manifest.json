@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "../back-end/static/build/static/css/main.e8a876c1.chunk.css",
+    "main.js": "../back-end/static/build/static/js/main.bc8f0295.chunk.js",
+    "main.js.map": "../back-end/static/build/static/js/main.bc8f0295.chunk.js.map",
+    "runtime-main.js": "../back-end/static/build/static/js/runtime-main.e097f84c.js",
+    "runtime-main.js.map": "../back-end/static/build/static/js/runtime-main.e097f84c.js.map",
+    "static/js/2.07675576.chunk.js": "../back-end/static/build/static/js/2.07675576.chunk.js",
+    "static/js/2.07675576.chunk.js.map": "../back-end/static/build/static/js/2.07675576.chunk.js.map",
+    "index.html": "../back-end/static/build/index.html",
+    "precache-manifest.ea396840369ee385d35bbccafc7588fa.js": "../back-end/static/build/precache-manifest.ea396840369ee385d35bbccafc7588fa.js",
+    "service-worker.js": "../back-end/static/build/service-worker.js",
+    "static/css/main.e8a876c1.chunk.css.map": "../back-end/static/build/static/css/main.e8a876c1.chunk.css.map",
+    "static/js/2.07675576.chunk.js.LICENSE.txt": "../back-end/static/build/static/js/2.07675576.chunk.js.LICENSE.txt",
+    "static/media/main.css": "../back-end/static/build/static/media/fa-solid-900.ef3df984.eot"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e097f84c.js",
+    "static/js/2.07675576.chunk.js",
+    "static/css/main.e8a876c1.chunk.css",
+    "static/js/main.bc8f0295.chunk.js"
+  ]
+}

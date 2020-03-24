@@ -4,7 +4,7 @@ export default class Footer extends React.Component{
     render(){
         return(
             <footer id="footer">
-				<p class="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
+				<p className="copyright">&copy; Untitled. Design: <a href="https://html5up.net">HTML5 UP</a>.</p>
 			</footer>
         );
     }

@@ -3,14 +3,13 @@ import './styles.css'
 import Collapse from '@material-ui/core/Collapse';
 import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import ShowWave from '../ShowWave/ShowWave'
-import BackupIcon from '@material-ui/icons/Backup';
 class Uploader extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             checked: false,
             isUploadFile: false,
-            filename: "",
+            filename: "default",
             progressState: "idle",
         }
     }
@@ -33,24 +32,34 @@ class Uploader extends React.Component {
         })
     }
     handleUploadImage = (ev) => {
-        if (this.uploadInput.files[0] === undefined)
-            return;
+        // handle read data from form
+        ev.preventDefault();
+        const data = new FormData();
+        
+        // handle file max size
+        if (this.uploadInput.files.length){
+            const maxSize = 1024 * 1024 * 10
+            let fileSize = this.uploadInput.files[0].size
+            if (fileSize > maxSize){
+                alert("file size is more then " + 10 + " MBs.")
+                return false
+            }
+        } else {
+            alert('Please select a wav file first.')
+            return false
+        }
+        data.append('file', this.uploadInput.files[0]);
+        this.setState({ filename: this.uploadInput.files[0].name })
+        
+        // handle progress circle
         if (this.state.progressState !== 'idle') {
             this.setState({ progressState: 'idle' });
             return;
         }
         this.setState({ progressState: 'progress' });
         
-        ev.preventDefault();
-        console.log(this.uploadInput.files[0])
-        const data = new FormData();
-        data.append('file', this.uploadInput.files[0]);
-        this.setState({ filename: this.uploadInput.files[0].name })
-        console.log(this.state.filename)
-        // console.log(this.uploadInput.files[0].name)
-        // data.append('filename', this.fileName.value);
 
-        fetch('http://192.168.50.225:5000/upload', {
+        fetch('https://www.haranalyzer.site/upload', {
             method: 'POST',
             body: data,
         }).then((response) => {
@@ -66,6 +75,17 @@ class Uploader extends React.Component {
         }).catch((error) => {
             console.log(error)
         })
+    }
+    toggleSelect = (event) => {
+        event.persist()
+        this.setState({filename: event.target.value});
+    }
+    toggleSelectButton = () => {
+        if (this.state.filename === "default") {
+            alert("Please select a example.")
+            return false
+        }
+        this.setState({ isUploadFile: true })
     }
     render() {
         if (!this.state.isUploadFile){
@@ -84,6 +104,18 @@ class Uploader extends React.Component {
                                     <button disabled={this.state.progressState === 'progress'}>Upload</button>
                                 </div>
                             </form>
+                            <div className="formContainer">
+                                <div className="field">
+									<label htmlFor="demo-category">Or Select examples</label>
+									<select value={this.state.filename} name="demo-category" id="demo-category" onChange={this.toggleSelect}>
+										<option value="default">-</option>
+										<option value="little_star.wav">Little Stars</option>
+									</select>
+								</div>
+                                <div className="fromPadding">
+                                    <button onClick={this.toggleSelectButton} className="selectButton" disabled={this.state.progressState === 'progress'}>Upload</button>
+                                </div>
+                            </div>
                             {this.state.progressState === 'success' ? (
                                 <div className="hidden"></div>
                             ) : (
