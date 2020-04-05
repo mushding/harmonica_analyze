@@ -8,9 +8,6 @@ export default class StartPage extends React.Component{
             <div>
                 <Navbar/>
                 <Uploader/>
-                <div className="informationContainer">
-                   
-                </div>
             </div>
         );
     }

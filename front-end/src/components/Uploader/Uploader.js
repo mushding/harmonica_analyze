@@ -91,29 +91,37 @@ class Uploader extends React.Component {
         if (!this.state.isUploadFile){
             return(
                 <div>
-                    <Collapse in={this.state.checked} timeout={2500}>
+                    <Collapse in={this.state.checked} timeout={2000}>
                         <div className="uploadContainer">
                             <form onSubmit={this.handleUploadImage} className="formContainer">
                                 <div className="fromPadding">
                                     <label htmlFor="file-upload" className="custom-file-upload">
-                                        Select wav file HERE
+                                        請選擇 wav 檔
                                     </label>
                                     <input ref={(ref) => { this.uploadInput = ref; }} type="file" id="file-upload" accept="audio/wav"/>
                                 </div>
                                 <div className="fromPadding">
-                                    <button disabled={this.state.progressState === 'progress'}>Upload</button>
+                                    <button disabled={this.state.progressState === 'progress'}>上傳</button>
                                 </div>
                             </form>
                             <div className="formContainer">
                                 <div className="field">
-									<label htmlFor="demo-category">Or Select examples</label>
+									<label htmlFor="demo-category">或選擇範例音檔</label>
 									<select value={this.state.filename} name="demo-category" id="demo-category" onChange={this.toggleSelect}>
 										<option value="default">-</option>
-										<option value="little_star.wav">Little Stars</option>
+										<option value="little_star.wav">小星星</option>
 									</select>
 								</div>
                                 <div className="fromPadding">
-                                    <button onClick={this.toggleSelectButton} className="selectButton" disabled={this.state.progressState === 'progress'}>Upload</button>
+                                    <button onClick={this.toggleSelectButton} className="selectButton" disabled={this.state.progressState === 'progress'}>上傳</button>
+                                </div>
+                            </div>
+                            <div className="recordContainer">
+                                <div className="recordTextContainer">
+                                    <p>或選擇直接錄音</p>
+                                </div>
+                                <div className="uploadIcon">
+                                    <a href="/#/record"><button>進入錄音頁面</button></a>
                                 </div>
                             </div>
                             {this.state.progressState === 'success' ? (
@@ -137,7 +145,7 @@ class Uploader extends React.Component {
         else {
             return(
                 <div>
-                    <ShowWave file={this.state.filename}/>
+                    <ShowWave file={this.state.filename} isRecord={false}/>
                 </div>
             );
         }

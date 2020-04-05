@@ -6,7 +6,7 @@ export default class Navbar extends React.Component{
     render(){
         return(
             <div className="homeIcon">
-                <a href="/home"><HomeOutlinedIcon/></a>
+                <a href="/#/home"><HomeOutlinedIcon/></a>
             </div>
         );
     }

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import WaveSurfer from 'wavesurfer.js';
 import CursorPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.cursor';
 import RegionsPlugin from 'wavesurfer.js/dist/plugin/wavesurfer.regions';
@@ -59,7 +60,7 @@ export default class ShowWave extends React.Component{
         } else {
             this.reCreateRegions()
         }
-        this.wavesurfer.load(url)
+        this.props.isRecord ? this.wavesurfer.load(this.props.blobUrl) : this.wavesurfer.load(url)
     }
     createWavesurfer = () => {
         const options = {
@@ -284,4 +285,14 @@ export default class ShowWave extends React.Component{
             </div>
         );
     }
+}
+
+ShowWave.propTypes = {
+    file: PropTypes.string,
+    isRecord: PropTypes.bool,
+    blobUrl: PropTypes.string
+}
+
+ShowWave.propTypes = {
+    isRecord: false
 }
