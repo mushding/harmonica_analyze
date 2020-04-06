@@ -42,7 +42,7 @@ for index in range(0, length, STEP_SIZE):
 tensor_track = torch.Tensor(track_array)
 
 # load model
-model = torch.load('../model/harmonica_model/harmonica_error_2d_model_15.pth')
+model = torch.load('../model/harmonica_error_model_26.pth')
 print("loading model...")
 print('-'*50)
 

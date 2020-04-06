@@ -5,16 +5,6 @@ import "./styles.css";
 
 // global varible area
 let mediaRecorder = null;
-let stream = null;
-let recorder = null;
-let recording = false;
-let volume = null;
-let audioInput = null;
-let sampleRate = null;
-let AudioContext = window.AudioContext || window.webkitAudioContext;
-let context = null;
-let analyser = null;
-let tested = false;
 
 export default class Recorder extends React.Component {
     constructor(props) {
@@ -22,6 +12,7 @@ export default class Recorder extends React.Component {
         this.state = {
             isStop: false,
             checked: false,
+            recordChecked: false,
             blobUrl: "",
             isMicAvailable: false,
         };
@@ -53,59 +44,6 @@ export default class Recorder extends React.Component {
                     }
                 }
             })
-    }
-    drawSineWave = () => {
-        let canvasCtx = this.canvasRef.current.getContext("2d");
-
-        let WIDTH = this.canvasRef.current.width;
-        let HEIGHT = this.canvasRef.current.height;
-        let CENTERX = this.canvasRef.current.width / 2;
-        let CENTERY = this.canvasRef.current.height / 2;
-
-        analyser.fftSize = 2048;
-        var bufferLength = analyser.fftSize;
-        console.log(bufferLength);
-        var dataArray = new Uint8Array(bufferLength);
-        console.log(dataArray)
-
-        canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-
-        var draw = () => {
-
-            // drawVisual = requestAnimationFrame(draw);
-
-            analyser.getByteTimeDomainData(dataArray);
-
-            canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-            canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-            canvasCtx.lineWidth = 2;
-            canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
-
-            canvasCtx.beginPath();
-
-            var sliceWidth = WIDTH * 1.0 / bufferLength;
-            var x = 0;
-
-            for (var i = 0; i < bufferLength; i++) {
-                console.log(dataArray)
-                var v = dataArray[i] / 128.0;
-                var y = v * HEIGHT/2;
-
-                if(i === 0) {
-                    canvasCtx.moveTo(x, y);
-                } else {
-                    canvasCtx.lineTo(x, y);
-                }
-
-                x += sliceWidth;
-            }
-
-            canvasCtx.lineTo(WIDTH, CENTERY);
-            canvasCtx.stroke();
-        };
-
-        draw();
     }
     show = () => {
         var that = this;
@@ -139,43 +77,16 @@ export default class Recorder extends React.Component {
                     mimeType: "audio/webm"
                 };
                 mediaRecorder = new MediaRecorder(stream, options);
-                mediaRecorder.ondataavailable = this.handleDataAvailable;
-                mediaRecorder.start();
-                this.setUpRecording(stream)
+                mediaRecorder.addEventListener('dataavailable', (e) => {
+                    if (e.data.size > 0){
+                        this.handleDataAvailable(e) 
+                    }
+                })
+                mediaRecorder.start()
+                this.setState({ recordChecked: true })
             })
     };
-    setUpRecording = (stream) => {
-        context = new AudioContext();
-        sampleRate = context.sampleRate;
-        
-        // creates a gain node
-        volume = context.createGain();
-        
-        // creates an audio node from teh microphone incoming stream
-        audioInput = context.createMediaStreamSource(stream);
-        
-        // Create analyser
-        analyser = context.createAnalyser();
-        
-        // connect audio input to the analyser
-        audioInput.connect(analyser);
-        
-        // connect analyser to the volume control
-        // analyser.connect(volume);
-        
-        let bufferSize = 2048;
-        let recorder = context.createScriptProcessor(bufferSize, 2, 2);
-        
-        // we connect the volume control to the processor
-        // volume.connect(recorder);
-        
-        analyser.connect(recorder);
-        
-        // finally connect the processor to the output
-        recorder.connect(context.destination); 
-        this.drawSineWave();
-    };
-    handleDataAvailable = event => {
+    handleDataAvailable = (event) => {
         const blobDataInWebaFormat = event.data;
         const blobDataInWavFormat: Blob = new Blob([blobDataInWebaFormat], { type: "audio/wav" });
         const dataUrl = URL.createObjectURL(blobDataInWavFormat);
@@ -196,6 +107,7 @@ export default class Recorder extends React.Component {
     };
     toggleStop = () => {
         mediaRecorder.stop();
+        this.handleDataAvailable()
     };
     render() {
         if (!this.state.isStop) {
@@ -217,7 +129,11 @@ export default class Recorder extends React.Component {
                                 stop record
                             </button>
                         </div>
-                        <canvas width="500" height="300" ref={this.canvasRef}></canvas>
+                    </Collapse>
+                    <Collapse in={this.state.recordChecked} timeout={2000}>
+                        <div className="recordingTextContainer">
+                            <h3>Recording ...</h3>
+                        </div>
                     </Collapse>
                 </div>
             );
