@@ -32,7 +32,7 @@ for index in range(0, length, STEP_SIZE):
         break
     waveform_part = waveform_part[np.newaxis, ...]                                      # [1, 44100]      
     waveform_part = torch.from_numpy(waveform_part)	                                    # torch [1, 44100]
-    print(np.shape(waveform_part))
+    #print(np.shape(waveform_part))
     mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform_part) # torch [1, 128, 221]
     mel_specgram = mel_specgram.detach().numpy()					                    # numpy [1, 128, 221]																	                
     
@@ -42,7 +42,7 @@ for index in range(0, length, STEP_SIZE):
 tensor_track = torch.Tensor(track_array)
 
 # load model
-model = torch.load('../model/harmonica_error_model_26.pth')
+model = torch.load('../model/harmonica_2d_wind_ver/harmonica_error_2d_model_10.pth')
 print("loading model...")
 print('-'*50)
 

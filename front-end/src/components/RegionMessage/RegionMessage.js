@@ -9,9 +9,20 @@ export default class RegionMessage extends React.Component{
             <div className="messageContainer">
                 <div className="textContainer">
                     { region.attributes === "1" ? (
-                        <h3>The Error is have a flat note</h3>
+                        <div>
+                            <h3>這裡的音色吹得不太飽滿喔</h3>
+                            <h3>試著把嘴吧張大一點，把琴格都蓋滿</h3>
+                        </div>
                     ) : region.attributes === "2" ? (
-                        <h3>The Error is have a double note</h3>
+                        <div>
+                            <h3>這裡有吹到兩個以上的音喔</h3>
+                            <h3>跳位練習可以多加強一些！</h3>
+                        </div>
+                    ) : region.attributes === "4" ? (
+                        <div>
+                            <h3>這裡換氣的聲音太大聲囉</h3>
+                            <h3>慢慢的吸氣，換氣的時候嘴吧不用離口琴太遠喔</h3>
+                        </div>
                     ) : (
                         <h3>attributes: {region.attributes}</h3>
                     )}

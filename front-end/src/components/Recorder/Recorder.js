@@ -1,6 +1,7 @@
 import React from "react";
 import ShowWave from "../ShowWave/ShowWave";
 import Collapse from "@material-ui/core/Collapse";
+import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import "./styles.css";
 
 // global varible area
@@ -13,6 +14,7 @@ export default class Recorder extends React.Component {
             isStop: false,
             checked: false,
             recordChecked: false,
+            progressChecked: false,
             blobUrl: "",
             isMicAvailable: false,
         };
@@ -107,6 +109,8 @@ export default class Recorder extends React.Component {
     };
     toggleStop = () => {
         mediaRecorder.stop();
+        this.setState({ recordChecked: false})
+        this.setState({ progressChecked: true })
         this.handleDataAvailable()
     };
     render() {
@@ -128,6 +132,11 @@ export default class Recorder extends React.Component {
                             >
                                 stop record
                             </button>
+                        </div>
+                    </Collapse>
+                    <Collapse in={this.state.progressChecked} timeout={2000}>
+                        <div className="progressContainer">
+                            <ColorCircularProgress/>
                         </div>
                     </Collapse>
                     <Collapse in={this.state.recordChecked} timeout={2000}>

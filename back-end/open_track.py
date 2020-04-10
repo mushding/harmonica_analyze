@@ -44,7 +44,7 @@ class Open_track:
 
     def loadmodel(self):
         # load model
-        model = torch.load('./model/harmonica_error_2d_model_10.pth')
+        model = torch.load('./model/harmonica_error_2d_model_5.pth')
         print("loading model...")
         print('-'*50)
 
@@ -92,7 +92,18 @@ class Open_track:
                         skip_until = (index_i + index_j)                       
                         outputarray.append(dict(Dout))                        
                         break
-              
+            
+            if output[index_i] == 4:
+                Dout["start"] = round((self.SECONDforarray * index_i),1)
+                for index_j in range(len(output[index_i:])):
+                    if output[index_i + index_j] == output[index_i]:
+                        index_j+=1
+                    else:                        
+                        Dout["end"] = round(self.SECONDforarray * (index_i + index_j),1)
+                        Dout["type"] = '4'
+                        skip_until = (index_i + index_j)                       
+                        outputarray.append(dict(Dout))                        
+                        break
 
         print(outputarray)
         return outputarray

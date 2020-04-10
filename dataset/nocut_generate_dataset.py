@@ -24,5 +24,5 @@ for file in range(filenum):
     for index in range(0, length, STEP_SIZE):
         waveform_part = waveform[:, index: index + FRAME_SIZE]													                
         if np.shape(waveform_part)[1] == FRAME_SIZE:
-            torchaudio.save("./harmonica_dataset/normal/" + str(num) + "_" + filename[file], waveform_part, sample_rate)
+            torchaudio.save("./harmonica_dataset/wind/" + str(num) + "_" + filename[file], waveform_part, sample_rate)
             num = num + 1

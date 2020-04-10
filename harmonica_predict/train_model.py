@@ -22,7 +22,7 @@ STEP_SIZE = 5000
 index_array = []
 note_array = []
 test_array = []
-dataset = ["space", "flat", "double", "normal"]
+dataset = ["space", "flat", "double", "normal", "wind"]
 
 os.chdir("../dataset/harmonica_dataset")
 for index, condition in enumerate(dataset):               
@@ -92,7 +92,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(27648 , 1000),   # fully connected layer, output 10 classes
             nn.ReLU(),
-            nn.Linear(1000, 4),  # fully connected layer, output 10 classes
+            nn.Linear(1000, 5),  # fully connected layer, output 10 classes
             # nn.ReLU(),
             # nn.Linear(5000, 100),  # fully connected layer, output 10 classes
             # nn.ReLU(),
@@ -144,8 +144,8 @@ for epoch in range(EPOCH):
                 jump = True
                 break
     print("start save EPOCH : ", epoch)
-    torch.save(cnn, "./model/harmonica_2d_ver3/harmonica_error_2d_model_" + str(epoch) + ".pth")
-    torch.save(cnn.state_dict(), "./model/harmonica_2d_ver3/harmonica_error_2d_params_" + str(epoch) + ".pth")
+    torch.save(cnn, "./model/harmonica_2d_wind_ver/harmonica_error_2d_model_" + str(epoch) + ".pth")
+    torch.save(cnn.state_dict(), "./model/harmonica_2d_wind_ver/harmonica_error_2d_params_" + str(epoch) + ".pth")
     print("saved")
     if jump:
         break
@@ -153,8 +153,8 @@ for epoch in range(EPOCH):
 print("training-----------done")
 
 print("start save...")
-torch.save(cnn, "./model/harmonica_2d_ver3/harmonica_error_2d_model.pth")
-torch.save(cnn.state_dict(), "./model/harmonica_2d_ver3/harmonica_error_2d_params.pth")
+torch.save(cnn, "./model/harmonica_2d_wind_ver/harmonica_error_2d_model.pth")
+torch.save(cnn.state_dict(), "./model/harmonica_2d_wind_ver/harmonica_error_2d_params.pth")
 print("saved")
 
 test_output, _ = cnn(tensor_test)
