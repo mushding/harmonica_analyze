@@ -110,6 +110,7 @@ class Uploader extends React.Component {
 									<select value={this.state.filename} name="demo-category" id="demo-category" onChange={this.toggleSelect}>
 										<option value="default">-</option>
 										<option value="little_star.wav">小星星</option>
+                                        <option value="little_star_wind.wav">小星星_換氣版</option>
 									</select>
 								</div>
                                 <div className="fromPadding">

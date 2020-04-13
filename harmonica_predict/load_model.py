@@ -26,7 +26,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(56320, 1000),   # fully connected layer, output 10 classes
             nn.ReLU(),
-            nn.Linear(1000, 9),  # fully connected layer, output 10 classes
+            nn.Linear(1000, 4),  # fully connected layer, output 10 classes
             # nn.ReLU(),
             # nn.Linear(5000, 100),  # fully connected layer, output 10 classes
             # nn.ReLU(),
@@ -40,8 +40,6 @@ class CNN(nn.Module):
         output = self.out(x)
         return output, x    # return x for visualization
 
-
 def predict(track, model):
-    predict, _ = model(track)
-    #print(predict)
+    predict = model(track)
     return torch.max(predict, 1)[1].data.numpy()
