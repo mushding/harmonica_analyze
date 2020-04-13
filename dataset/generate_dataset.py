@@ -11,18 +11,17 @@ STEP_SIZE = 20000
 
 CHECK_SIZE = 4410   # 0.1 sec
 CHECK_NUM = 4000
-CUT_LIMIT = 0
-# CUT_LIMIT = 0.05
+CUT_LIMIT = 0.05
 
 # name_dir_array = ['flat', 'double', 'normal'] 
-name_dir_array = ['space'] 
+name_dir_array = ['do_high', 'do_mid', 're_mid', 'mi_mid', 'fa_mid', 'so_mid', 'la_mid', 'si_mid'] 
 for name_dir in name_dir_array:
-    filename = os.listdir("./record/" + name_dir)
+    filename = os.listdir("./note_record/" + name_dir)
     filenum = len(filename) 
     # read sound track to predict
     for file in range(filenum):
         cut_waveform = []
-        waveform, sample_rate = torchaudio.load("./record/" + name_dir + "/" + filename[file]) # torch.Size([1, x])
+        waveform, sample_rate = torchaudio.load("./note_record/" + name_dir + "/" + filename[file]) # torch.Size([1, x])
         print(filename[file], "before cutting:", waveform.size())
         waveform = list(waveform[0].numpy())            # tensor -> ndarray -> list
         for index in range(0, len(waveform), CHECK_SIZE):
@@ -43,5 +42,5 @@ for name_dir in name_dir_array:
         for index in range(0, length, STEP_SIZE):
             waveform_part = cut_waveform[:, index: index + FRAME_SIZE]													                
             if np.shape(waveform_part)[1] == FRAME_SIZE:
-                torchaudio.save("./harmonica_dataset/" + name_dir + "/" + str(num) + "_" + filename[file], waveform_part, sample_rate)
+                torchaudio.save("./harmonica_note_dataset/" + name_dir + "/" + str(num) + "_" + filename[file], waveform_part, sample_rate)
                 num = num + 1

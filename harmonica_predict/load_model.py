@@ -26,7 +26,7 @@ class CNN(nn.Module):
         self.out = nn.Sequential(
             nn.Linear(56320, 1000),   # fully connected layer, output 10 classes
             nn.ReLU(),
-            nn.Linear(1000, 4),  # fully connected layer, output 10 classes
+            nn.Linear(1000, 9),  # fully connected layer, output 10 classes
             # nn.ReLU(),
             # nn.Linear(5000, 100),  # fully connected layer, output 10 classes
             # nn.ReLU(),

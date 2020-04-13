@@ -2,6 +2,8 @@ dataset/harmonica_dataset
 dataset/harmonica_note_test_dataset
 dataset/harmonica_test
 dataset/record
+dataset/note_record
+dataset/harmonica_note_dataset
 .vscode
 model
 harmonica_predict/__pycache__
