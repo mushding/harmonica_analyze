@@ -115,7 +115,7 @@ export default class ShowWave extends React.Component{
                                 regionColor = "hsla(195, 63%, 23%, 0.2)"
                                 break;
                             case "4":
-                                regionColor = "hsla(195, 63%, 23%, 0.2)"
+                                regionColor = "hsla(216, 63%, 23%, 0.2)"
                                 break;
                             default:
                                 break;
