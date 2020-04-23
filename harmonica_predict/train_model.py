@@ -40,7 +40,9 @@ for index, condition in enumerate(dataset):
         waveform = torch.from_numpy(waveform)												                # to torch [1, 5437]
         
         mel_specgram = torchaudio.transforms.MelSpectrogram(new_sample_rate)(waveform)                      # shape [1, 128, 331]
-        mel_specgram = mel_specgram.detach().numpy()                                                        # to numpy to append
+        mel_specgram = mel_specgram.detach().numpy()    
+        print(np.shape(mel_specgram))  
+        exit()                                                  # to numpy to append
         note_array.append(mel_specgram)  
         index_array.append(index)                                                                           # put into array
 

@@ -4,6 +4,7 @@ dataset/harmonica_test
 dataset/record
 dataset/note_record
 dataset/harmonica_note_dataset
+graph
 .vscode
 model
 harmonica_predict/__pycache__
