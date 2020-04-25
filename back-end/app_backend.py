@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, redirect, request, url_for, jsonify, session
 from flask import app, Response, send_file, render_template
 from flask_cors import CORS
@@ -6,6 +7,7 @@ from load_model import CNN
 from werkzeug.utils import secure_filename
 import subprocess
 import os
+from note_predict.note_compare import Note_compare
 
 # <--- start flask --->
 app = Flask(__name__, template_folder="templates",
@@ -14,6 +16,11 @@ app = Flask(__name__, template_folder="templates",
 # <--- app config area --->
 app.config["CLIENT_WAV"] = "../back-end/static/HarmonicaData/wav"
 
+@app.route('/tests')
+def tests():
+    compare = Note_compare()
+    compare.generate_correct_user_timeline()
+    return "tests"
 
 @app.route('/<path:path>')
 def catch_all(path):

@@ -208,6 +208,9 @@ class Measure:
     def getRightBarlineType(self):
         return self._getBarLine('right')
 
+    def getBPM(self):
+        return self._elem.xpath("direction/sound/@tempo")[0]
+
     def __iter__(self):
         for elem in self._elem.xpath('note'):
             yield Note(elem, self.getAttributes())
@@ -249,6 +252,9 @@ class MusicXMLReader:
 
     def getComposer(self):
         return self._get_text("identification/creator[@type='composer']")
+
+    def getBPM(self):
+        return self._getFirstMeasure().getBPM()
 
     def getInitialKeySignature(self):
         return self._getFirstMeasure().getAttributes().getKeySignature()

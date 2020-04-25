@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from fractions import Fraction
-from reader import Measure
+from note_predict.mxl_reader.reader import Measure
 
 # define the bass part is at the 3rd line
 BASS_PART = 5
@@ -36,27 +36,18 @@ def stepToNumberFlat(step):
     return str(STEP_TO_NUMBER[step] - 1)
 
 def generateOctaveMark(octave, isBass=False):
-    
-    if isBass:
-        center_C = 4
-    else:
-        center_C = 5
-
-    if octave >= center_C:
-        return "'" * (octave - center_C)
-    else:
-        return "," * (center_C - octave)
+    return " " + str(round(octave/12 - 1) + 6)
 
 def generateTimeSuffix(duration, divisions):
     note_length = Fraction(duration, divisions)
     if duration < divisions: # less than quarter notes: add / and continue
-        return generateTimeSuffix(duration*2, divisions) + "/"
+        return "/" + generateTimeSuffix(duration*2, divisions)
     elif duration == divisions: # quarter notes
         return ""
     elif duration * 2 == divisions * 3: # syncopated notes
         return "."
     else: # sustained more than 1.5 quarter notes: add - and continue
-        return " -" + generateTimeSuffix(duration - divisions, divisions)
+        return "-" + generateTimeSuffix(duration - divisions, divisions)
 
 def getNoteDisplayedDuration(note):
     if note.isTuplet():
@@ -116,8 +107,7 @@ def generateBasicNote(note, isBass=False):
     global accidentList
 
     (duration, divisions) = getNoteDisplayedDuration(note)
-    # time_suffix = generateTimeSuffix(duration, divisions)
-    time_suffix = ""
+    time_suffix = " " + generateTimeSuffix(duration, divisions)
     
     # Turn flat into all sharp
     if note.isRest():
@@ -127,9 +117,6 @@ def generateBasicNote(note, isBass=False):
         (note_name, octave) = note.getPitch()
 
         keysig = note.getAttributes().getKeySignature()
-        # if keysig != 'C':
-        #     offset = getTransposeOffsetToC(keysig)
-        #     (note_name, octave) = getTransposedPitch(note_name, octave, offset)
         step = note_name[0:1] # C, D, E, F, G, A, B
         accidental = note_name[1:2] # sharp (#) and flat (b)
         force_accidental = note_name[2:3] # additonal sharp and flat and natural
@@ -157,33 +144,18 @@ def generateBasicNote(note, isBass=False):
 
         if accidental == 'b' and IS_FLAT_TO_SHARP:
             if step == 'C':
-                return stepToNumberFlat(step) + generateOctaveMark(octave - 1, isBass) + time_suffix
+                return step + generateOctaveMark(octave - 1, isBass) + time_suffix
             elif step == 'F':
-                return stepToNumberFlat(step) + generateOctaveMark(octave, isBass) + time_suffix
+                return step + generateOctaveMark(octave, isBass) + time_suffix
             accidental = '#'
-            return stepToNumberFlat(step) + accidental + generateOctaveMark(octave, isBass) + time_suffix
+            return step + accidental + generateOctaveMark(octave, isBass) + time_suffix
         else:
-            return stepToNumber(step) + accidental + generateOctaveMark(octave, isBass) + time_suffix
+            return step + accidental + generateOctaveMark(octave, isBass) + time_suffix
 
 def generateNote(note, isBass=False):
     global crossMeasureTie
     result = generateBasicNote(note, isBass)
     note_array_measure.append(result)
-    # if note.isTieStart():
-    #     result = "( " + result
-    #     crossMeasureTie = True
-    # if note.isTupletStart():
-    #     result = "(y" + result
-    # if note.isTupletStop():
-    #     result = result + ")"
-    # if note.isTieStop():
-    #     accidentList = [['']*8 for i in range(8)]
-    #     crossMeasureTie = False
-    #     if '-' in result: # put ending tie before the first -
-    #         idx = result.index('-')
-    #         result = result[:idx] + ") " + result[idx:]
-    #     else:
-    #         result = result + " )"
     return result
 
 def generateMeasure(measure, isBass=False):
@@ -211,19 +183,14 @@ def generateMeasures(measureList, isBass=False):
     pieces = []
     for i, measure in enumerate(measureList):
         note_array_measure = []
-        # if measure.getLeftBarlineType() == Measure.BARLINE_REPEAT:  # see left
-        #     if i == 0:
-        #         # pieces.append("|:")
-        #         pieces.append(":")
-        #     else:
-        #         pieces.append(":")
-
         pieces.append(" ")                              
         pieces.append(generateMeasure(measure, isBass))             # see content
         pieces.append(" ")
-        # pieces.append(generateRightBarline(measure))                # see right
         note_array.append(note_array_measure)
     return ''.join(pieces)
+
+def getSecPerMeasure(reader):
+    return (60 / (int(reader.getBPM()) / 4)) / 4
 
 def generateBody(reader, max_measures_per_line=4):
 
@@ -244,8 +211,6 @@ def generateBody(reader, max_measures_per_line=4):
         for part_index, part in enumerate(parts):
             accidentList = [['']*8 for i in range(8)]
             line = ""
-            # line = "Q%d: " % (part_index + 1)
-            # line += '|'
             if part_index + 1 == BASS_PART:
                 line += generateMeasures(part_measures[part][begin:end], isBass = True)   # enter bass part
             else:   
@@ -254,12 +219,33 @@ def generateBody(reader, max_measures_per_line=4):
         lines.append('') # empty line
         column_now = column_now + 1
 
-        # if column_now == PAGE_PER_COLUMN:       # per page column
-        #     lines.append('[fenye]')
-        #     lines.append('')
-        #     column_now = 0
-
     return '\n'.join(lines)
+
+def generateDuration(timeSigArr):
+    duration = 1
+    for timeSig in timeSigArr:
+        if timeSig == '-':
+            duration += 1
+        elif timeSig == '/':
+            duration *= 0.5
+        elif timeSig == '.':
+            duration = duration + duration * 0.5
+    return duration
+
+def generateDictionary(reader):
+    sec_per_note = getSecPerMeasure(reader)
+    mxl_time = list()
+    note_sec = 0
+    for measure in note_array:
+        for note in measure:
+            tmp_dir = dict()
+            tmp_dir['start'] = note_sec
+            index = note.split(" ")
+            note_sec = note_sec + generateDuration(index[2]) * sec_per_note
+            tmp_dir['end'] = note_sec
+            tmp_dir['type'] = index[0] + index[1]
+            mxl_time.append(tmp_dir)
+    return mxl_time
 
 class WriterError(Exception):
     pass
@@ -268,4 +254,5 @@ class Jianpu99Writer:
 
     def generate(self, reader):
         generateBody(reader)
-        return note_array
+        mxl_time = generateDictionary(reader)
+        return mxl_time

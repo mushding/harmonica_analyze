@@ -2,23 +2,17 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 
-from reader import MusicXMLReader, MusicXMLParseError
-from writer import Jianpu99Writer, WriterError
+from note_predict.mxl_reader.reader import MusicXMLReader, MusicXMLParseError
+from note_predict.mxl_reader.writer import Jianpu99Writer, WriterError
 
-def parseArguments():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('input_file', help="input file in MusicXML format")
-    return parser.parse_args()
+class Converter:
+    def reader(self, filename):
+        reader = MusicXMLReader(filename)
+        writer = Jianpu99Writer()
 
-
-if __name__ == "__main__":
-    args = parseArguments()
-
-    reader = MusicXMLReader(args.input_file)
-    writer = Jianpu99Writer()
-
-    try:
-        print(writer.generate(reader))
-    except WriterError as e:
-        print("error: %s" % str(e))
+        try:
+            return writer.generate(reader), int(reader.getBPM())
+        except WriterError as e:
+            print("error: %s" % str(e))
