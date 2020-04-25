@@ -22,7 +22,8 @@ export default class HomePage extends Component{
 						</div>
 						<nav>
 							<ul>
-								<li><a href="/#/start">start</a></li>
+								<li><a href="/#/start">音色檢測模式</a></li>
+								<li><a href="/#/notetest">音高比對模式</a></li>
 							</ul>
 						</nav>
 					</header>	

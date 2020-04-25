@@ -21,7 +21,6 @@ class Note_compare:
         # return [[], [], ...] & [, , ...]
         wavname = "tests.wav"
         per_measure_arr, complete_arr = note_detector.detector(os.path.join("./static/HarmonicaData/wav", wavname), self.bpm_to_sample(bpm))
-        print(complete_arr)
 
         # real user input time line
         user = UserInputSound()

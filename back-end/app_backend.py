@@ -15,6 +15,7 @@ app = Flask(__name__, template_folder="templates",
 
 # <--- app config area --->
 app.config["CLIENT_WAV"] = "../back-end/static/HarmonicaData/wav"
+app.config["CLIENT_MXL"] = "../back-end/static/HarmonicaData/mxlfile"
 
 @app.route('/tests')
 def tests():
@@ -57,6 +58,20 @@ def fileUpload():
     file = request.files['file']
     filename = secure_filename(file.filename)
     destination = "/".join([app.config["CLIENT_WAV"], filename])
+    file.save(destination)
+    session['uploadFilePath'] = destination
+    response = "Whatever you wish too return"
+    return response
+
+# <--- front end upload mxl file to local dir --->
+@app.route('/uploadmxl', methods=['POST'])
+def mxlfileUpload():
+    if not os.path.isdir(app.config["CLIENT_MXL"]):
+        os.mkdir(app.config["CLIENT_MXL"])
+    print(request.files)
+    file = request.files['file']
+    filename = secure_filename(file.filename)
+    destination = "/".join([app.config["CLIENT_MXL"], filename])
     file.save(destination)
     session['uploadFilePath'] = destination
     response = "Whatever you wish too return"
