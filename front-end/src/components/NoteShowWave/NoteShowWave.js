@@ -51,6 +51,7 @@ export default class NoteShowWave extends React.Component{
         })
     }
     initWavesurfer = () => {
+        const url = "https://www.haranalyzer.site/wav/" + String(this.props.file)
         this.wavesurferArray = []
         // wavesurferArray[0] -> user, wavesurferArray[1] -> correct
         this.wavesurferArray.push(this.createWavesurfer('#user'))
@@ -62,8 +63,8 @@ export default class NoteShowWave extends React.Component{
             this.reCreateUserRegions()
             this.reCreateCorrectRegions()
         }
-        this.wavesurferArray[0].load(this.props.blobUrl)
-        this.wavesurferArray[1].load(this.props.blobUrl)
+        this.wavesurferArray[0].load(url)
+        this.wavesurferArray[1].load(url)
     }
     createWavesurfer = (waveformType) => {
         const options = {

@@ -101,7 +101,7 @@ export default class NoteRecorder extends React.Component {
         let wavdata = new FormData();
         wavdata.append("data", blobDataInWavFormat);
 
-        fetch("https://www.haranalyzer.site/recordUpload", {
+        fetch("https://www.haranalyzer.site/noteRecordUpload", {
             method: "POST",
             body: wavdata
         }).then(response => {

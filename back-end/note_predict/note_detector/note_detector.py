@@ -69,7 +69,7 @@ def detector(filename, measure_sample):
 
     # Open Wavfile
     sample_rate, waveform = wavfile.read(filename)
-    waveform = waveform[..., 0]
+    # waveform = waveform[..., 0]
     # waveform = waveform[0, :]
 
     # Print initial text

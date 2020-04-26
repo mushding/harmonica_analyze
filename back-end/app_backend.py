@@ -96,10 +96,25 @@ def recordUpload():
     command = "ffmpeg -y -i " + destination + " -ab 160k -ac 2 -ar 44100 -vn " + record_destination
     subprocess.call(command, shell=True)
     response = "Whatever you wish too return"
+    return response
+
+# <--- front end record blob file to backend --->
+@app.route('/noteRecordUpload', methods=['POST'])
+def noteRecordUpload():
+    if not os.path.isdir(app.config["CLIENT_WAV"]):
+        os.mkdir(app.config["CLIENT_WAV"])
+    file = request.files['data']
+    filename = secure_filename(file.filename)
+    destination = "/".join([app.config["CLIENT_WAV"], filename])
+    file.save(destination)
+    record_destination = "/".join([app.config["CLIENT_WAV"], "record.wav"])
+    command = "ffmpeg -y -i " + destination + " -ab 160k -ac 2 -ar 44100 -vn " + record_destination
+    subprocess.call(command, shell=True)
+    response = "Whatever you wish too return"
+    # cut the first
     cut = Cut()
     cut.cut_start()
     return response
-
 
 @app.route('/wav/<wav_name>')
 def streamwav(wav_name):
