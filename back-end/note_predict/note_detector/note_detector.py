@@ -69,19 +69,25 @@ def detector(filename, measure_sample):
 
     # Open Wavfile
     sample_rate, waveform = wavfile.read(filename)
+    waveform = waveform[..., 0]
     # waveform = waveform[0, :]
 
     # Print initial text
     # print('sampling at', FSAMP, 'Hz with max resolution of', FREQ_STEP, 'Hz')
     
     complete_note_array = []
+    # ignoreStartFlag = True
     for measure in range(0, len(waveform), measure_sample):
         tmp = []
         waveform_part = waveform[measure: measure + measure_sample]
         if len(waveform_part) < measure_sample:
             break
         for index in range(measure, measure + measure_sample, FRAME_SIZE):
-
+            # skip when there is no sound
+            # if ignoreStartFlag:
+            #     if max(waveform[index: index + FRAME_SIZE]) < 1000:
+            #         ignoreStartFlag = False
+            #         continue
             # Shift the buffer down and new data in
             try:
                 buf[:-FRAME_SIZE] = buf[FRAME_SIZE:]

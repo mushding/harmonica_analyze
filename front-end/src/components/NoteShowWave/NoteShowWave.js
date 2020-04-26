@@ -12,8 +12,6 @@ import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
 import {
     PlayArrow,
     Pause,
-    SyncDisabledOutlined,
-    SyncOutlined,
     Refresh,
 } from '@material-ui/icons'
 
@@ -21,14 +19,14 @@ export default class NoteShowWave extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            regionArr: [],
+            userRegionArr: [],
+            correctRegionArr: [],
             regionContent: {},
             buttonIsPlay: false,
-            buttonIsLoop: false,
-            buttonIsShowRegions: true,
+            buttonIsShowUserRegions: true,
+            buttonIsShowCorrectRegions: true,
             buttonIsShowMiniMap: true,
             buttonIsShowTimeline: true,
-            buttonIsShowCursor: true,
             buttonRegionClick: false,
             checked_1: false,
             checked_2: false,
@@ -53,20 +51,25 @@ export default class NoteShowWave extends React.Component{
         })
     }
     initWavesurfer = () => {
-        const url = "https://www.haranalyzer.site/wav/" + String(this.props.file)
-        this.createWavesurfer()
-        if (this.state.regionArr.length === 0) {
-            this.createRegions()
+        this.wavesurferArray = []
+        // wavesurferArray[0] -> user, wavesurferArray[1] -> correct
+        this.wavesurferArray.push(this.createWavesurfer('#user'))
+        this.wavesurferArray.push(this.createWavesurfer('#correct'))
+        if (this.state.userRegionArr.length === 0) {
+            this.createRegions("getCorrectRegions")
+            this.createRegions("getUserRegions")
         } else {
-            this.reCreateRegions()
+            this.reCreateUserRegions()
+            this.reCreateCorrectRegions()
         }
-        this.props.isRecord ? this.wavesurfer.load(this.props.blobUrl) : this.wavesurfer.load(url)
+        this.wavesurferArray[0].load(this.props.blobUrl)
+        this.wavesurferArray[1].load(this.props.blobUrl)
     }
-    createWavesurfer = () => {
+    createWavesurfer = (waveformType) => {
         const options = {
             barWidth: 1,
             cursorWidth: 1,
-            container: '#waveform',
+            container: waveformType + "-waveform",
             backend: 'MediaElement',
             height: 200,
             progressColor: '#005266',
@@ -78,23 +81,32 @@ export default class NoteShowWave extends React.Component{
             ]
         };
         const wavesurfer = WaveSurfer.create(options);
-        this.wavesurfer = wavesurfer
-        this.createMinimap()
-        this.createTimeline()
-        this.createCursor()
+        this.createTimeline(wavesurfer, waveformType)
+        this.createCursor(wavesurfer)
 
         // event listener
         wavesurfer.on('region-in', (region) => {
             this.region = region
         })
-        wavesurfer.on('region-out', this.onPlayEnd)
         wavesurfer.on('region-click', this.handdleRegionClick)
+        return wavesurfer
     }
-    onPlayEnd = () => {
-        this.state.buttonIsLoop ? this.wavesurfer.play() : this.wavesurfer.play(this.region.start)
-    }
-    createRegions = () => {
-        fetch("https://www.haranalyzer.site/getoutput/" + this.props.file, {})
+    createRegions = (regionType) => {
+        const NOTE_COLOR_TABLE = {
+            'C5': "hsla(343, 99%, 85%, 0.45)",
+            'C#5': "hsla(2, 100%, 74%, 0.45)",
+            'D5': "hsla(31, 100%, 70%, 0.45)",
+            'D#5': "hsla(45, 100%, 76%, 0.45)",
+            'E5': "hsla(62, 100%, 75%, 0.45)",
+            'F5': "hsla(82, 100%, 72%, 0.45)",
+            'F#5': "hsla(123, 100%, 76%, 0.45)",
+            'G5': "hsla(160, 100%, 76%, 0.45)",
+            'G#5': "hsla(198, 100%, 81%, 0.45)",
+            'A5': "hsla(234, 100%, 86%, 0.45)",
+            'A#5': "hsla(253, 100%, 86%, 0.45)",
+            'B5': "hsla(270, 98%, 81%, 0.45)",
+        }
+        fetch("https://www.haranalyzer.site/" + regionType + "/" + this.props.file + "/" + this.props.mxlfile, {})
             .then((response) => {
                 let data_promise = Promise.resolve(response.json())
                 data_promise.then((data) => {
@@ -102,24 +114,11 @@ export default class NoteShowWave extends React.Component{
                 }).then((jsonData) => {
                     this.setState({ progressState: false })
                     let len = jsonData.length
-                    let regionColor = undefined
                     let regionStateArr = []
                     for (let i = 0; i < len; i++){
                         const regionData = jsonData[i]
                         const errorType = jsonData[i]["type"]
-                        switch (errorType){
-                            case "1":
-                                regionColor = "hsla(197, 40%, 23%, 0.3)"
-                                break;
-                            case "2":
-                                regionColor = "hsla(195, 63%, 23%, 0.2)"
-                                break;
-                            case "4":
-                                regionColor = "hsla(216, 63%, 23%, 0.2)"
-                                break;
-                            default:
-                                break;
-                        }
+                        const regionColor = NOTE_COLOR_TABLE[errorType]
                         const regionDir = {
                             start: regionData["start"],
                             end: regionData["end"],
@@ -129,9 +128,17 @@ export default class NoteShowWave extends React.Component{
                             color: regionColor,
                         }
                         regionStateArr.push(regionDir)
-                        this.wavesurfer.addRegion(regionDir) 
+                        if (regionType === "getUserRegions"){
+                            this.wavesurferArray[0].addRegion(regionDir)
+                        } else {
+                            this.wavesurferArray[1].addRegion(regionDir)
+                        }
                     }
-                    this.setState({ regionArr: regionStateArr})
+                    if (regionType === "getUserRegions"){
+                        this.setState({ userRegionArr: regionStateArr})
+                    } else {
+                        this.setState({ correctRegionArr: regionStateArr})
+                    }
                 })
             })
             .catch((error) => {
@@ -140,32 +147,31 @@ export default class NoteShowWave extends React.Component{
             })
         return true
     }
-    reCreateRegions = () => {
-        let arrLen = this.state.regionArr.length
+    reCreateUserRegions = () => {
+        let arrLen = this.state.userRegionArr.length
         for(let i = 0; i < arrLen; i++){
-            this.wavesurfer.addRegion(this.state.regionArr[i]) 
+            this.wavesurferArray[0].addRegion(this.state.userRegionArr[i]) 
+        }
+    }
+    reCreateCorrectRegions = () => {
+        let arrLen = this.state.correctRegionArr.length
+        for(let i = 0; i < arrLen; i++){
+            this.wavesurferArray[1].addRegion(this.state.correctRegionArr[i]) 
         }
     }
     reCreateWavesurfer = () => {
-        this.wavesurfer.destroy()
+        this.wavesurferArray[0].destroy()
+        this.wavesurferArray[1].destroy()
         this.initWavesurfer()
         this.setState({ buttonRegionClick: false })
     }
-    createMinimap = () => {
-        this.wavesurfer.addPlugin(MinimapPlugin.create({
-            container: '#wave-minimap',
-            waveColor: '#777',
-            progressColor: '#222',
-            height: 50,
-        })).initPlugin('minimap')
-    }
-    createTimeline = () => {
-        this.wavesurfer.addPlugin(TimelinePlugin.create({
-            container: "#wave-timeline",
+    createTimeline = (wavesurfer, waveformType) => {
+        wavesurfer.addPlugin(TimelinePlugin.create({
+            container: waveformType + "-wave-timeline",
         })).initPlugin('timeline')
     }
-    createCursor = () => {
-        this.wavesurfer.addPlugin(CursorPlugin.create({
+    createCursor = (wavesurfer) => {
+        wavesurfer.addPlugin(CursorPlugin.create({
             showTime: true,
             opacity: 1,
             hideOnBlur: true,
@@ -201,43 +207,46 @@ export default class NoteShowWave extends React.Component{
     }
     togglePlay = () => {
         const bool = this.state.buttonIsPlay
-        this.wavesurfer.playPause();
+        this.wavesurferArray[1].playPause();
         this.setState({ buttonIsPlay: !bool })
     }
-    toggleClearRegions = () => {
-        const bool = this.state.buttonIsShowRegions
-        bool ? this.wavesurfer.clearRegions() : this.reCreateRegions()
-        this.setState({ buttonIsShowRegions: !bool })
+    toggleClearUserRegions = () => {
+        const bool = this.state.buttonIsShowUserRegions
+        bool ? this.wavesurferArray[0].clearRegions() : this.reCreateUserRegions()
+        this.setState({ buttonIsShowUserRegions: !bool })
     }
-    toggleLoop = () => {
-        const bool = this.state.buttonIsLoop
-        this.setState({ buttonIsLoop: !bool })
-    }
-    toggleShowMiniMap = () => {
-        const bool = this.state.buttonIsShowMiniMap
-        bool ? this.wavesurfer.destroyPlugin('minimap') : this.createMinimap()
-        this.setState({ buttonIsShowMiniMap: !bool})
+    toggleClearCorrectRegions = () => {
+        const bool = this.state.buttonIsShowCorrectRegions
+        bool ? this.wavesurferArray[1].clearRegions() : this.reCreateCorrectRegions()
+        this.setState({ buttonIsShowCorrectRegions: !bool })
     }
     toggleShowTimeline = () => {
         const bool = this.state.buttonIsShowTimeline
-        bool ? this.wavesurfer.destroyPlugin('timeline') : this.createTimeline()
+        if (bool){
+            this.wavesurferArray[0].destroyPlugin('timeline') 
+            this.wavesurferArray[1].destroyPlugin('timeline')  
+        } else {
+            this.createTimeline(this.wavesurferArray[0], "#user")
+            this.createTimeline(this.wavesurferArray[1], "#correct")
+        }
         this.setState({ buttonIsShowTimeline: !bool})
-    }
-    toggleShowCursor = () => {
-        const bool = this.state.buttonIsShowCursor
-        bool ? this.wavesurfer.destroyPlugin('cursor') : this.createCursor()
-        this.setState({ buttonIsShowCursor: !bool})
     }
     render(){
         return (
             <div>
-                <Collapse in={this.state.checked_1} timeout={1300}> 
+                <Collapse in={this.state.checked_1} timeout={2000}> 
                     <div className="waveCursorContainer">
                         <div className="waveContainer">
-                            <div id='waveform'></div>
+                            <div id='user-waveform'></div>
                             <br/>
-                            <div id='wave-minimap'></div>
-                            <div id='wave-timeline'></div>
+                            <div id='user-wave-timeline'></div>
+                        </div>
+                    </div>
+                    <div className="waveCursorContainer">
+                        <div className="waveContainer">
+                            <div id='correct-waveform'></div>
+                            <br/>
+                            <div id='correct-wave-timeline'></div>
                         </div>
                     </div>
                 </Collapse>
@@ -248,22 +257,14 @@ export default class NoteShowWave extends React.Component{
                                 { this.state.buttonIsPlay ? <Pause/> : <PlayArrow/> }
                             </div>
                         </button>
-                        <button onClick={this.toggleLoop} disabled={this.state.progressState}>
-                            <div className="buttonIcon">
-                                { this.state.buttonIsLoop ? <SyncOutlined/> : <SyncDisabledOutlined/> }
-                            </div>
+                        <button onClick={this.toggleClearUserRegions} disabled={this.state.progressState}>
+                            { this.state.buttonIsShowUserRegions ? "關閉上面波形圖的標籤" : "開起上面波形圖的標籤" }
                         </button>
-                        <button onClick={this.toggleClearRegions} disabled={this.state.progressState}>
-                            { this.state.buttonIsShowRegions ? "disable regions" : "able regions" }
-                        </button>
-                        <button onClick={this.toggleShowMiniMap} disabled={this.state.progressState}>
-                            { this.state.buttonIsShowMiniMap ? "close minimap" : "open minimap" }
+                        <button onClick={this.toggleClearCorrectRegions} disabled={this.state.progressState}>
+                            { this.state.buttonIsShowCorrectRegions ? "關閉下面波形圖的標籤" : "開起下面波形圖的標籤" }
                         </button>
                         <button onClick={this.toggleShowTimeline} disabled={this.state.progressState}>
-                            { this.state.buttonIsShowTimeline ? "close timeline" : "open timeline" }
-                        </button>
-                        <button onClick={this.toggleShowCursor} disabled={this.state.progressState}>
-                            { this.state.buttonIsShowCursor ? "close cursor" : "open sursor"}
+                            { this.state.buttonIsShowTimeline ? "關閉時間軸" : "開啟時間軸" }
                         </button>
                         <button onClick={this.reCreateWavesurfer} disabled={this.state.progressState}>
                             <div className="buttonIcon">
@@ -283,19 +284,13 @@ export default class NoteShowWave extends React.Component{
                 </Collapse>
                 <Collapse in={this.state.buttonRegionClick} timeout={1000}>
                     <RegionMessage region={this.state.regionContent}/>
-                </Collapse>
-               
+                </Collapse>    
             </div>
         );
     }
 }
 
-ShowWave.propTypes = {
+NoteShowWave.propTypes = {
     file: PropTypes.string,
-    isRecord: PropTypes.bool,
     blobUrl: PropTypes.string
-}
-
-ShowWave.propTypes = {
-    isRecord: false
 }

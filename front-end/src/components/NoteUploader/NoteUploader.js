@@ -1,6 +1,7 @@
 import React from 'react'
 import Collapse from '@material-ui/core/Collapse';
 import ColorCircularProgress from '../ProgressCircle/ProgressCircle'
+import NoteRecorder from '../NoteRecorder/NoteRecorder'
 import './styles.css'
 
 
@@ -73,54 +74,57 @@ export default class NoteUploader extends React.Component{
         }).then(() => {
             console.log("IN!!!!")
             this.setState({ isUploadFile: true })
-        }).then(() => {
-            window.location.assign("https://www.haranalyzer.site/#/record");
-        })
-        .catch((error) => {
+        }).catch((error) => {
             console.log(error)
         })
     }
     render(){
-        return(
-            <div>
-                <Collapse in={this.state.checked} timeout={2000}>
-                    <div className="recordContainer">
-                        <p>請先上傳 mxl 檔案到網站上，上傳完畢後會自動跳轉到錄音頁面</p>
-                    </div>
-                    <div className="recordContainer">
-                        <div className="recordTextContainer">
-                            <p>不知道什麼是 mxl 檔案嗎？</p>
+        if (!this.state.isUploadFile){
+            return(
+                <div>
+                    <Collapse in={this.state.checked} timeout={2000}>
+                        <div className="recordContainer">
+                            <p>請先上傳 mxl 檔案到網站上，上傳完畢後會自動跳轉到錄音頁面</p>
                         </div>
-                        <a href="https://hackmd.io/neoAtjS4RQegjdL_r3ucug" rel="noopener noreferrer" target="_blank"><button>按這進入如何製作 mxl 檔案教學</button></a>
-                    </div>
-                    <div className="uploadContainer">
-                        <form onSubmit={this.handleUploadImage} className="formContainer">
-                            <div className="fromPadding">
-                                <label htmlFor="file-upload" className="custom-file-upload">
-                                    請選擇 mxl 檔
-                                </label>
-                                <input ref={(ref) => { this.uploadInput = ref; }} type="file" id="file-upload" accept=".mxl"/>
+                        <div className="recordContainer">
+                            <div className="recordTextContainer">
+                                <p>不知道什麼是 mxl 檔案嗎？</p>
                             </div>
-                            <div className="fromPadding">
-                                <button disabled={this.state.progressState === 'progress'}>上傳</button>
-                            </div>
-                        </form>
-                        {this.state.progressState === 'success' ? (
-                            <div className="hidden"></div>
-                        ) : (
-                            <Collapse
-                                in={this.state.progressState === 'progress'}
-                                timeout={2000}
-                                unmountOnExit
-                            >
-                                <div className="progressContainer">
-                                    <ColorCircularProgress />
+                            <a href="https://hackmd.io/neoAtjS4RQegjdL_r3ucug" rel="noopener noreferrer" target="_blank"><button>按這進入如何製作 mxl 檔案教學</button></a>
+                        </div>
+                        <div className="uploadContainer">
+                            <form onSubmit={this.handleUploadImage} className="formContainer">
+                                <div className="fromPadding">
+                                    <label htmlFor="file-upload" className="custom-file-upload">
+                                        請選擇 mxl 檔
+                                    </label>
+                                    <input ref={(ref) => { this.uploadInput = ref; }} type="file" id="file-upload" accept=".mxl"/>
                                 </div>
-                            </Collapse>
-                        )}
-                    </div>
-                </Collapse>
-            </div>     
-        );
+                                <div className="fromPadding">
+                                    <button disabled={this.state.progressState === 'progress'}>上傳</button>
+                                </div>
+                            </form>
+                            {this.state.progressState === 'success' ? (
+                                <div className="hidden"></div>
+                            ) : (
+                                <Collapse
+                                    in={this.state.progressState === 'progress'}
+                                    timeout={2000}
+                                    unmountOnExit
+                                >
+                                    <div className="progressContainer">
+                                        <ColorCircularProgress />
+                                    </div>
+                                </Collapse>
+                            )}
+                        </div>
+                    </Collapse>
+                </div>     
+            );
+        } else {
+            return(
+                <NoteRecorder mxlfile={this.state.filename}/>
+            );
+        }
     }
 }

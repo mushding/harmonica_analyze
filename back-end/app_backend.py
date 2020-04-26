@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 import subprocess
 import os
 from note_predict.note_compare import Note_compare
+from note_predict.cut_record import Cut
 
 # <--- start flask --->
 app = Flask(__name__, template_folder="templates",
@@ -17,16 +18,9 @@ app = Flask(__name__, template_folder="templates",
 app.config["CLIENT_WAV"] = "../back-end/static/HarmonicaData/wav"
 app.config["CLIENT_MXL"] = "../back-end/static/HarmonicaData/mxlfile"
 
-@app.route('/tests')
-def tests():
-    compare = Note_compare()
-    compare.generate_correct_user_timeline()
-    return "tests"
-
 @app.route('/<path:path>')
 def catch_all(path):
     return 'You want path: %s' % path
-
 
 @app.route('/')
 def home():
@@ -44,7 +38,19 @@ def Opentrack(wav_name):
     Dout = open.findwrongnote(output)
     return jsonify(Dout)
 
+# <--- note compare, get user record data dictionay --->
+@app.route('/getUserRegions/<string:wav_name>/<string:mxl_name>')
+def getUserRegions(wav_name, mxl_name):
+    compare = Note_compare()
+    return jsonify(compare.generate_user_timeline(mxl_name, wav_name))
 
+# <--- note compare, get correct record data dictionay --->
+@app.route('/getCorrectRegions/<string:wav_name>/<string:mxl_name>')
+def getCorrectRegions(wav_name, mxl_name):
+    compare = Note_compare()
+    return jsonify(compare.generate_correct_timeline(mxl_name))
+
+# <--- get train data dictionay --->
 @app.route('/getoutput/<string:wav_name>')
 def getoutput(wav_name):
     return Opentrack(wav_name)
@@ -90,6 +96,8 @@ def recordUpload():
     command = "ffmpeg -y -i " + destination + " -ab 160k -ac 2 -ar 44100 -vn " + record_destination
     subprocess.call(command, shell=True)
     response = "Whatever you wish too return"
+    cut = Cut()
+    cut.cut_start()
     return response
 
 

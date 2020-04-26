@@ -244,6 +244,8 @@ def generateDictionary(reader):
             note_sec = note_sec + generateDuration(index[2]) * sec_per_note
             tmp_dir['end'] = note_sec
             tmp_dir['type'] = index[0] + index[1]
+            tmp_dir['resize'] = False
+            tmp_dir['drag'] = False
             mxl_time.append(tmp_dir)
     return mxl_time
 
