@@ -234,11 +234,11 @@ def generateDuration(timeSigArr):
 
 def generateDictionary(reader):
     sec_per_note = getSecPerMeasure(reader)
-    mxl_time = list()
+    mxl_time = []
     note_sec = 0
     for measure in note_array:
         for note in measure:
-            tmp_dir = dict()
+            tmp_dir = {}
             tmp_dir['start'] = note_sec
             index = note.split(" ")
             note_sec = note_sec + generateDuration(index[2]) * sec_per_note
@@ -255,6 +255,10 @@ class WriterError(Exception):
 class Jianpu99Writer:
 
     def generate(self, reader):
+        global note_array_measure
+        global note_array
+        note_array = []
+        note_array_measure = []
         generateBody(reader)
         mxl_time = generateDictionary(reader)
         return mxl_time

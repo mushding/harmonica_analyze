@@ -94,18 +94,14 @@ export default class NoteShowWave extends React.Component{
     }
     createRegions = (regionType) => {
         const NOTE_COLOR_TABLE = {
-            'C5': "hsla(343, 99%, 85%, 0.45)",
-            'C#5': "hsla(2, 100%, 74%, 0.45)",
-            'D5': "hsla(31, 100%, 70%, 0.45)",
-            'D#5': "hsla(45, 100%, 76%, 0.45)",
-            'E5': "hsla(62, 100%, 75%, 0.45)",
-            'F5': "hsla(82, 100%, 72%, 0.45)",
-            'F#5': "hsla(123, 100%, 76%, 0.45)",
-            'G5': "hsla(160, 100%, 76%, 0.45)",
-            'G#5': "hsla(198, 100%, 81%, 0.45)",
-            'A5': "hsla(234, 100%, 86%, 0.45)",
-            'A#5': "hsla(253, 100%, 86%, 0.45)",
-            'B5': "hsla(270, 98%, 81%, 0.45)",
+            'C5': "hsla(180, 100%, 71%, 0.45)",
+            'D5': "hsla(229, 100%, 67%, 0.45)",
+            'E5': "hsla(117, 100%, 72%, 0.45",
+            'F5': "hsla(150, 100%, 31%, 0.45)",
+            'G5': "hsla(62, 100%, 61%, 0.45)",
+            'A5': "hsla(35, 100%, 55%, 0.45)",
+            'B5': "hsla(5, 100%, 52%, 0.45)",
+            'C6': "hsla(311, 100%, 74%, 0.45)",
         }
         fetch("https://www.haranalyzer.site/" + regionType + "/" + this.props.file + "/" + this.props.mxlfile, {})
             .then((response) => {
@@ -236,6 +232,7 @@ export default class NoteShowWave extends React.Component{
         return (
             <div>
                 <Collapse in={this.state.checked_1} timeout={2000}> 
+                    <h3 className="textContainer">剛剛錄音所判斷出的音高及長度</h3>
                     <div className="waveCursorContainer">
                         <div className="waveContainer">
                             <div id='user-waveform'></div>
@@ -243,6 +240,7 @@ export default class NoteShowWave extends React.Component{
                             <div id='user-wave-timeline'></div>
                         </div>
                     </div>
+                    <h3 className="textContainer">mxl 檔的正確音高及長度</h3>
                     <div className="waveCursorContainer">
                         <div className="waveContainer">
                             <div id='correct-waveform'></div>
