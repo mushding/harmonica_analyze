@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "../back-end/static/build/static/css/main.36cbb90a.chunk.css",
-    "main.js": "../back-end/static/build/static/js/main.17d4deaa.chunk.js",
-    "main.js.map": "../back-end/static/build/static/js/main.17d4deaa.chunk.js.map",
+    "main.css": "../back-end/static/build/static/css/main.3817f4f4.chunk.css",
+    "main.js": "../back-end/static/build/static/js/main.f8cf7d01.chunk.js",
+    "main.js.map": "../back-end/static/build/static/js/main.f8cf7d01.chunk.js.map",
     "runtime-main.js": "../back-end/static/build/static/js/runtime-main.e097f84c.js",
     "runtime-main.js.map": "../back-end/static/build/static/js/runtime-main.e097f84c.js.map",
-    "static/js/2.93e4b939.chunk.js": "../back-end/static/build/static/js/2.93e4b939.chunk.js",
-    "static/js/2.93e4b939.chunk.js.map": "../back-end/static/build/static/js/2.93e4b939.chunk.js.map",
+    "static/js/2.63469047.chunk.js": "../back-end/static/build/static/js/2.63469047.chunk.js",
+    "static/js/2.63469047.chunk.js.map": "../back-end/static/build/static/js/2.63469047.chunk.js.map",
     "index.html": "../back-end/static/build/index.html",
-    "precache-manifest.5c398fd4a0ebb1d22e608683cc768c51.js": "../back-end/static/build/precache-manifest.5c398fd4a0ebb1d22e608683cc768c51.js",
+    "precache-manifest.3c894dd0a8327f933b7bb9ba9f6c075c.js": "../back-end/static/build/precache-manifest.3c894dd0a8327f933b7bb9ba9f6c075c.js",
     "service-worker.js": "../back-end/static/build/service-worker.js",
-    "static/css/main.36cbb90a.chunk.css.map": "../back-end/static/build/static/css/main.36cbb90a.chunk.css.map",
-    "static/js/2.93e4b939.chunk.js.LICENSE.txt": "../back-end/static/build/static/js/2.93e4b939.chunk.js.LICENSE.txt",
+    "static/css/main.3817f4f4.chunk.css.map": "../back-end/static/build/static/css/main.3817f4f4.chunk.css.map",
+    "static/js/2.63469047.chunk.js.LICENSE.txt": "../back-end/static/build/static/js/2.63469047.chunk.js.LICENSE.txt",
     "static/media/main.css": "../back-end/static/build/static/media/fa-solid-900.ef3df984.eot"
   },
   "entrypoints": [
     "static/js/runtime-main.e097f84c.js",
-    "static/js/2.93e4b939.chunk.js",
-    "static/css/main.36cbb90a.chunk.css",
-    "static/js/main.17d4deaa.chunk.js"
+    "static/js/2.63469047.chunk.js",
+    "static/css/main.3817f4f4.chunk.css",
+    "static/js/main.f8cf7d01.chunk.js"
   ]
 }

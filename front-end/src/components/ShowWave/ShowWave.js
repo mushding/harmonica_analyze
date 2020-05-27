@@ -108,14 +108,14 @@ export default class ShowWave extends React.Component{
                         const regionData = jsonData[i]
                         const errorType = jsonData[i]["type"]
                         switch (errorType){
-                            case "1":
-                                regionColor = "hsla(197, 40%, 23%, 0.3)"
+                            case "1":  // flat
+                                regionColor = "hsla(117, 100%, 59%, 0.43)"
                                 break;
-                            case "2":
-                                regionColor = "hsla(195, 63%, 23%, 0.2)"
+                            case "2":  // double
+                                regionColor = "hsla(23, 100%, 59%, 0.48)"
                                 break;
-                            case "4":
-                                regionColor = "hsla(216, 63%, 23%, 0.2)"
+                            case "4":  // breath
+                                regionColor = "hsla(0, 100%, 59%, 0.48)"
                                 break;
                             default:
                                 break;

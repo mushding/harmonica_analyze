@@ -94,14 +94,14 @@ export default class NoteShowWave extends React.Component{
     }
     createRegions = (regionType) => {
         const NOTE_COLOR_TABLE = {
-            'C5': "hsla(180, 100%, 71%, 0.45)",
-            'D5': "hsla(229, 100%, 67%, 0.45)",
-            'E5': "hsla(117, 100%, 72%, 0.45",
-            'F5': "hsla(150, 100%, 31%, 0.45)",
-            'G5': "hsla(62, 100%, 61%, 0.45)",
-            'A5': "hsla(35, 100%, 55%, 0.45)",
-            'B5': "hsla(5, 100%, 52%, 0.45)",
-            'C6': "hsla(311, 100%, 74%, 0.45)",
+            'C5': "hsla(180, 100%, 77%, 0.45)",
+            'D5': "hsla(229, 100%, 77%, 0.45)",
+            'E5': "hsla(117, 100%, 77%, 0.45",
+            'F5': "hsla(139, 100%, 50%, 0.45)",
+            'G5': "hsla(62, 100%, 77%, 0.45)",
+            'A5': "hsla(35, 100%, 77%, 0.45)",
+            'B5': "hsla(5, 100%, 77%, 0.45)",
+            'C6': "hsla(311, 100%, 77%, 0.45)",
         }
         fetch("https://www.haranalyzer.site/" + regionType + "/" + this.props.file + "/" + this.props.mxlfile, {})
             .then((response) => {
